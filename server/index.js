@@ -13,48 +13,48 @@ const app = express();
 // Connect Database
 connectDB();
 
-//conect Webhook
+// ✅ Stripe Webhook Route (MUST be first)
 app.post(
-  "/api/stripe",
+  "/api/stripe/webhook",
   express.raw({ type: "application/json" }),
-  stripeWebhooks,
+  stripeWebhooks
 );
+
+// Body parsers for normal routes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Middleware
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
-  }),
+  })
 );
 
-app.use(express.json());
-
-// Health Route
+// Routes
 app.get("/", (req, res) => res.send("Server is Live 🚀"));
 app.use("/api/user", userRouter);
 app.use("/api/chat", chatRouter);
 app.use("/api/message", messageRouter);
 app.use("/api/credit", creditRouter);
 
-// Example API Route
 app.get("/api/test", (req, res) => {
   res.json({ message: "API working successfully" });
 });
 
-// 404 Handler
+// 404
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Global Error Handler
+// Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Something went wrong" });
 });
 
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on port ${PORT}`);
 });

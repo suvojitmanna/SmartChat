@@ -8,48 +8,59 @@ export const stripeWebhooks = async (req, res) => {
 
   let event;
 
-  // ✅ Verify webhook signature
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
-  } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+  } catch (error) {
+    console.log("❌ Signature verification failed.");
+    return res.status(400).send(`Webhook Error: ${error.message}`);
   }
 
   try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object;
 
-      const { transitionId, appId } = session.metadata;
+        const { transitionId, appId } = session.metadata || {};
 
-      if (appId !== "smartgpt") {
-        return res.json({ received: true });
+        if (appId !== "smartgpt") {
+          return res.json({ received: true });
+        }
+
+        const transition = await Transition.findOne({
+          _id: transitionId,
+          isPaid: false,
+        });
+
+        if (!transition) {
+          return res.status(404).json({
+            message: "Transaction not found or already paid",
+          });
+        }
+
+        await User.updateOne(
+          { _id: transition.userId },
+          { $inc: { credits: transition.credits } },
+        );
+
+        transition.isPaid = true;
+        await transition.save();
+
+        console.log("✅ Credits added to user:", transition.userId);
+        break;
       }
 
-      const transition = await Transition.findOne({
-        _id: transitionId,
-        isPaid: false,
-      });
-
-      if (!transition) return res.json({ received: true });
-
-      // ✅ Add credits to user
-      await User.updateOne(
-        { _id: transition.userId },
-        { $inc: { credits: transition.credits } }
-      );
-
-      // ✅ Mark payment as paid
-      transition.isPaid = true;
-      await transition.save();
+      default:
+        console.log("Unhandled event type:", event.type);
+        break;
     }
 
     res.json({ received: true });
   } catch (error) {
     console.error("Webhook processing error:", error);
-    res.status(500).send("Server Error");
+    res.status(500).send("Internal Server Error");
   }
 };
