@@ -1,10 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { dummyPlans } from "../assets/assets";
 import Loading from "./Loading";
+import { useAppcontext } from "../context/Appcontext";
+import toast from "react-hot-toast";
 
 const Credits = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { token, axios } = useAppcontext();
+
+  const fetchplans = async () => {
+    try {
+      const { data } = await axios.get("/api/credit/plan", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) {
+        setPlans(data.plans);
+      } else {
+        toast.error(data.message || "Failed to fetch plans.");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+    setLoading(false);
+  };
+
+  const purchasePlan = async (planId) => {
+  try {
+    const { data } = await axios.post(
+      "/api/credit/purchase",
+      { planId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (data.success) {
+      window.location.href = data.url;
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message);
+  }
+};
+
 
   useEffect(() => {
     setPlans(dummyPlans);
@@ -56,7 +94,9 @@ const Credits = () => {
                   <span className="text-4xl font-bold">${plan.price}</span>
                   <span
                     className={`ml-2 ${
-                      isPro ? "text-purple-100" : "text-gray-500 dark:text-gray-400"
+                      isPro
+                        ? "text-purple-100"
+                        : "text-gray-500 dark:text-gray-400"
                     }`}
                   >
                     / {plan.credits} credits
@@ -66,7 +106,9 @@ const Credits = () => {
                 {/* Features */}
                 <ul
                   className={`space-y-2 mb-8 ${
-                    isPro ? "text-purple-100" : "text-gray-600 dark:text-gray-300"
+                    isPro
+                      ? "text-purple-100"
+                      : "text-gray-600 dark:text-gray-300"
                   }`}
                 >
                   {plan.features.map((feature, index) => (
@@ -93,6 +135,11 @@ const Credits = () => {
                     ? "bg-white text-purple-700 hover:bg-gray-100"
                     : "bg-purple-600 text-white hover:bg-purple-700"
                 }`}
+                onClick={() =>
+                  toast.promise(purchasePlan(plan._id), {
+                    loading: "processing...",
+                  })
+                }
               >
                 Buy Now
               </button>

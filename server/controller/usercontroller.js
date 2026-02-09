@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
+import Chat from "../models/chat.js";
 import bcrypt from "bcryptjs";
 
 // Generate JWT
@@ -9,69 +10,96 @@ const generateToken = (id) => {
   });
 };
 
-// REGISTER USER
+// ================= REGISTER USER =================
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
     const user = await User.create({ name, email, password });
 
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+      success: true, // 🔥 IMPORTANT
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// LOGIN USER
+// ================= LOGIN USER =================
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+      success: true, // 🔥 IMPORTANT
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// GET LOGGED IN USER
+// ================= GET LOGGED IN USER =================
 export const getUser = async (req, res) => {
   try {
     res.status(200).json({
       success: true,
-      user: req.user, // added from auth middleware
+      user: req.user,
     });
   } catch (error) {
     res.status(500).json({

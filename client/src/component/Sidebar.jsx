@@ -3,18 +3,59 @@ import { useAppcontext } from "../context/Appcontext";
 import { assets } from "../assets/assets";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
   const navigate = useNavigate();
-  const { chats, setSelectedChat, theme, setTheme, user } = useAppcontext();
+  const {
+    chats,
+    setSelectedChat,
+    theme,
+    setTheme,
+    user,
+    createNewChat,
+    axios,
+    setChats,
+    fetchUserChats,
+    setToken,
+  } = useAppcontext();
+
   const [search, setSearch] = useState("");
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    toast.success("Logged out Successfully");
+  };
+
+  const deleteChat = async (e, chatId) => {
+    try {
+      e.stopPropagation();
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this chat?",
+      );
+      if (!confirmDelete) return;
+
+      const { data } = await axios.post("/api/chat/delete", { chatId });
+
+      if (data.success) {
+        setChats((prev) => prev.filter((chat) => chat && chat._id !== chatId));
+        await fetchUserChats();
+        toast.success(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
 
   return (
     <div
       className={`flex flex-col h-screen min-w-72 p-5 
-  dark:bg-gradient-to-b dark:from-[#242124]/30 dark:to-[#000000]/30
-  border-r border-[#80609F]/30 backdrop-blur-3xl 
-  transition-all duration-500 max-md:absolute left-0 z-10 ${!isMenuOpen && "max-md:-translate-x-full"}`}
+      dark:bg-gradient-to-b dark:from-[#242124]/30 dark:to-[#000000]/30
+      border-r border-[#80609F]/30 backdrop-blur-3xl 
+      transition-all duration-500 max-md:absolute left-0 z-10 ${
+        !isMenuOpen && "max-md:-translate-x-full"
+      }`}
     >
       {/* Logo */}
       <img
@@ -22,16 +63,17 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
         className="w-full max-w-48"
         alt="Logo"
       />
-      {/* New Chat button */}
+
+      {/* New Chat */}
       <button
-        onClick={() => setSelectedChat(null)}
-        className="flex justify-center items-center w-full py-2 mt-10 text-white bg-gradient-to-r from-[#A456F7] to-[#3D81F6] text-sm rounded-md cursor-pointer hover:scale-105"
+        onClick={createNewChat}
+        className="flex justify-center items-center w-full py-2 mt-10 text-white bg-gradient-to-r from-[#A456F7] to-[#3D81F6] text-sm rounded-md hover:scale-105"
       >
         <span className="mr-2 text-xl">+</span> New Chat
       </button>
 
-      {/* Search Conversations */}
-      <div className="flex items-center gap-2 p-3 mt-4 border border-gray-400 dark:border-white/20 rounded-md focus-within:ring-2 focus-within:ring-purple-500/40 hover:scale-105">
+      {/* Search */}
+      <div className="flex items-center gap-2 p-3 mt-4 border border-gray-400 dark:border-white/20 rounded-md focus-within:ring-2 focus-within:ring-purple-500/40">
         <img src={assets.search_icon} className="w-4 dark:invert" />
         <input
           onChange={(e) => setSearch(e.target.value)}
@@ -41,80 +83,85 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
           className="text-xs text-gray-700 dark:text-gray-200 placeholder:text-gray-400 outline-none bg-transparent w-full"
         />
       </div>
-      {/* React Chats */}
-      {chats.length > 0 && <p className="mt-4 text-sm">Recent Chats</p>}
-      <div className="flex-1 overflow-y-scroll mt-3 text-sm space-y-3 hover:scale-100">
+
+      {/* Chats */}
+      {chats?.length > 0 && <p className="mt-4 text-sm">Recent Chats</p>}
+
+      <div className="flex-1 overflow-y-scroll mt-3 text-sm space-y-3">
         {chats
-          .filter((chat) =>
-            chat.messages[0]
-              ? chat.messages[0]?.content
-                  .toLowerCase()
-                  .includes(search.toLowerCase())
-              : chat.name.toLowerCase().includes(search.toLowerCase()),
-          )
-          .map((chat) => (
-            <div
-              onClick={() => {
-                navigate("/");
-                setSelectedChat(chat);
-                setIsMenuOpen(false);
-              }}
-              key={chat._id}
-              className="p-2 px-4 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between group hover:scale-105"
-            >
-              <div>
-                <p className="truncate w-full">
-                  {chat.messages.length > 0
-                    ? chat.messages[0].content.slice(0, 32)
-                    : chat.name}
-                </p>
-                <p className="text-xs text-gray-500 ">
-                  {" "}
-                  {moment(chat.updatedAt).fromNow()}{" "}
-                </p>
+          ?.filter((chat) => {
+            if (!chat) return false;
+            const text = chat.messages?.[0]?.content || chat.name || "";
+            return text.toLowerCase().includes(search.toLowerCase());
+          })
+          .map((chat) => {
+            if (!chat) return null;
+
+            return (
+              <div
+                key={chat._id}
+                onClick={() => {
+                  navigate("/");
+                  setSelectedChat(chat);
+                  setIsMenuOpen(false);
+                }}
+                className="p-2 px-4 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between group hover:scale-105"
+              >
+                <div>
+                  <p className="truncate w-full">
+                    {chat.messages?.length > 0
+                      ? chat.messages[0].content.slice(0, 32)
+                      : chat.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {moment(chat.updatedAt).fromNow()}
+                  </p>
+                </div>
+
+                <img
+                  src={assets.bin_icon}
+                  className="hidden group-hover:block w-4 cursor-pointer not-dark:invert"
+                  onClick={(e) =>
+                    toast.promise(deleteChat(e, chat._id), {
+                      loading: "Deleting...",           
+                    })
+                  }
+                />
               </div>
-              <img
-                src={assets.bin_icon}
-                className="hidden group-hover:block w-4 cursor-pointer not-dark:invert"
-              />
-            </div>
-          ))}
+            );
+          })}
       </div>
 
-      {/* Community Images */}
+      {/* Community */}
       <div
         onClick={() => {
           navigate("/community");
           setIsMenuOpen(false);
         }}
-        className="flex items-center gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:scale-105
- transition-all"
+        className="flex items-center gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:scale-105"
       >
         <img src={assets.gallery_icon} className="w-4.5 not-dark:invert" />
-        <div className="flex flex-col text-sm">
-          <p>Community Images</p>
-        </div>
+        <p className="text-sm">Community Images</p>
       </div>
 
-      {/* Credit Purchase Option */}
+      {/* Credits */}
       <div
         onClick={() => {
           navigate("/credits");
           setIsMenuOpen(false);
         }}
-        className="flex items-center gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:scale-105
- transition-all"
+        className="flex items-center gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:scale-105"
       >
         <img src={assets.diamond_icon} className="w-4.5 not-dark:invert" />
-        <div className="flex flex-col text-sm">
-          <p className="">Credits : {user?.credits}</p>
+        <div className="text-sm">
+          <p>Credits : {user?.credits}</p>
           <p className="text-xs text-gray-400">
             Purchase credits to use SmartGpt
           </p>
         </div>
       </div>
 
-      {/* Dark Mode Toggle */}
+      {/* Dark Mode */}
       <div className="flex items-center justify-between gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md hover:scale-105 ">
         <div className="flex items-center gap-2 text-sm">
           <img
@@ -135,24 +182,20 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
         </label>
       </div>
 
-      {/* User Account */}
-      <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer group hover:scale-105">
+      {/* User */}
+      <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md group">
         <img src={assets.user_icon} className="w-7 rounded-full" />
-        <p className="flex-1 text-sm dark:text-primary truncate">
+        <p className="flex-1 text-sm truncate">
           {user ? user.name : "Login your account"}
         </p>
         {user && (
           <img
-            className="h-5 cursor-pointer hidden not-dark:invert group-hover:block"
+            className="h-5 cursor-pointer hidden group-hover:block"
+            onClick={logout}
             src={assets.logout_icon}
           />
         )}
       </div>
-      <img
-        onClick={() => setIsMenuOpen(false)}
-        src={assets.close_icon}
-        className="absolute top-3 right-3 w-5 h-5 cursor-pointer md:hidden not-dark:invert"
-      />
     </div>
   );
 };

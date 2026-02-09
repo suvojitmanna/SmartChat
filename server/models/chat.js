@@ -15,15 +15,18 @@ const chatSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    messages: [
-      {
-        isImage: { type: Boolean, required: true },
-        isPublished: { type: Boolean, default: false },
-        role: { type: String, required: true },
-        content: { type: String, required: true },
-        timestamp: { type: Date, default: Date.now },
-      },
-    ],
+    messages: {
+      type: [
+        {
+          isImage: { type: Boolean, required: true },
+          isPublished: { type: Boolean, default: false },
+          role: { type: String, required: true },
+          content: { type: String, required: true },
+          timestamp: { type: Date, default: Date.now },
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true },
 );

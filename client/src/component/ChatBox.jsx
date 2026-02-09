@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAppcontext } from "../context/Appcontext";
 import { assets } from "../assets/assets";
 import Message from "./Message";
+import toast from "react-hot-toast";
 
 const ChatBox = () => {
   const containerRef = useRef(null);
 
-  const { selectedChat, theme } = useAppcontext();
+  const { selectedChat, setSelectedChat, theme, user, axios, token, setUser } =
+    useAppcontext();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
@@ -14,7 +16,62 @@ const ChatBox = () => {
   const [isPublished, setIsPublished] = useState(false);
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
+      if (!user) return toast("Login to send message");
+      if (!selectedChat?._id) return toast.error("No chat selected");
+
+      setLoading(true);
+      const promptCopy = prompt;
+      setPrompt("");
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "user",
+          content: promptCopy,
+          timestamp: Date.now(),
+          isImage: false,
+        },
+      ]);
+
+      const { data } = await axios.post(
+        `/api/message/${mode}`,
+        { chatId: selectedChat._id, prompt: promptCopy, isPublished },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (data.success) {
+        setMessages((prev) => [...prev, data.reply]);
+
+        // keep chat synced for refresh
+        setSelectedChat((prev) => ({
+          ...prev,
+          messages: [
+            ...(prev.messages || []),
+            {
+              role: "user",
+              content: promptCopy,
+              timestamp: Date.now(),
+              isImage: false,
+            },
+            data.reply,
+          ],
+        }));
+
+        setUser((prev) => ({
+          ...prev,
+          credits: prev.credits - (mode === "image" ? 5 : 1),
+        }));
+      } else {
+        toast.error(data.message);
+        setPrompt(promptCopy);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -29,10 +86,10 @@ const ChatBox = () => {
     if (containerRef.current) {
       containerRef.current.scrollTo({
         top: containerRef.current.scrollHeight,
-        behaviour: "smooth",
+        behavior: "smooth",
       });
     }
-  });
+  }, [messages]);
 
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40">
