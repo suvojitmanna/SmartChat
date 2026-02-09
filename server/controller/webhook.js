@@ -22,23 +22,11 @@ export const stripeWebhooks = async (req, res) => {
   try {
     if (event.type === "payment_intent.succeeded") {
       const paymentIntent = event.data.object;
+      const metadata = paymentIntent.metadata;
 
-      const sessionList = await stripe.checkout.sessions.list({
-        payment_intent: paymentIntent.id,
-      });
+      const { transitionId, appId } = metadata;
 
-      if (!sessionList.data.length) {
-        console.log("No session found for payment");
-        return res.json({ received: true });
-      }
-
-      const session = sessionList.data[0];
-      const { transitionId, appId } = session.metadata;
-
-      if (appId !== "smartgpt") {
-        console.log("Ignored event for different app");
-        return res.json({ received: true });
-      }
+      if (appId !== "smartgpt") return res.json({ received: true });
 
       const transition = await Transition.findOne({
         _id: transitionId,
@@ -58,7 +46,7 @@ export const stripeWebhooks = async (req, res) => {
       transition.isPaid = true;
       await transition.save();
 
-      console.log("✅ Credits added successfully");
+      console.log("✅ Credits added to user:", transition.userId);
     }
 
     res.json({ received: true });
