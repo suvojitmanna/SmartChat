@@ -1,0 +1,37 @@
+<svg width="360" height="90" viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg" fill="none">
+
+  <defs>
+    <!-- Bubble Gradient -->
+    <linearGradient id="bubbleGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"></stop>
+      <stop offset="100%" stop-color="#8B5CF6"></stop>
+    </linearGradient>
+
+    <!-- Star Gradient -->
+    <linearGradient id="starGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FACC15"></stop>
+      <stop offset="100%" stop-color="#F97316"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon Group -->
+  <g transform="translate(10,20)">
+    <rect x="0" y="0" rx="18" ry="18" width="54" height="40" fill="url(#bubbleGradient)" opacity="0.15"></rect>
+    
+    <path d="M14 10h26a8 8 0 0 1 8 8v6a8 8 0 0 1-8 8H28l-10 8v-8h-4a8 8 0 0 1-8-8v-6a8 8 0 0 1 8-8z" fill="url(#bubbleGradient)"></path>
+
+    <!-- Sparkle Star -->
+    <path d="M27 4 L29.8 10.5 L36.5 13 L29.8 15.5 L27 22 L24.2 15.5 L17.5 13 L24.2 10.5 Z" fill="url(#starGradient)"></path>
+  </g>
+
+  <!-- Brand Name -->
+  <text x="80" y="48" font-family="Outfit, Poppins, sans-serif" font-size="32" font-weight="700" fill="#FFFFFF">
+    SmartChat
+  </text>
+
+  <!-- Tagline -->
+  <text x="82" y="70" font-family="Outfit, Poppins, sans-serif" font-size="15" font-weight="500" fill="#A78BFA">
+    Intelligent AI Chatbot
+  </text>
+
+</svg>

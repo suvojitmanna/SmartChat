@@ -1,0 +1,27 @@
+<!--?xml version="1.0" encoding="utf-8"?-->
+<svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA"></stop>
+      <stop offset="100%" stop-color="#7C3AED"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- Sun Center -->
+  <circle cx="512" cy="512" r="180" fill="url(#purpleGradient)"></circle>
+
+  <!-- Sun Rays -->
+  <g fill="url(#purpleGradient)">
+    <rect x="492" y="80" width="40" height="140" rx="20"></rect>
+    <rect x="492" y="804" width="40" height="140" rx="20"></rect>
+    <rect x="80" y="492" width="140" height="40" rx="20"></rect>
+    <rect x="804" y="492" width="140" height="40" rx="20"></rect>
+
+    <rect x="200" y="200" width="40" height="120" rx="20" transform="rotate(-45 220 260)"></rect>
+    <rect x="784" y="200" width="40" height="120" rx="20" transform="rotate(45 804 260)"></rect>
+    <rect x="200" y="704" width="40" height="120" rx="20" transform="rotate(45 220 764)"></rect>
+    <rect x="784" y="704" width="40" height="120" rx="20" transform="rotate(-45 804 764)"></rect>
+  </g>
+
+</svg>

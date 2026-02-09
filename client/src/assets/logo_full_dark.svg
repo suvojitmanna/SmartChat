@@ -1,0 +1,31 @@
+<svg width="320" height="80" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Purple gradient (bubble + tagline) -->
+    <linearGradient id="purpleGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#A78BFA"></stop>
+      <stop offset="100%" stop-color="#7C3AED"></stop>
+    </linearGradient>
+
+    <!-- Orange gradient (STAR only) -->
+    <linearGradient id="orangeGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FDBA74"></stop>
+      <stop offset="100%" stop-color="#F97316"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- Chat Bubble -->
+  <path d="M18 18C18 12 22 8 28 8H56C62 8 66 12 66 18V38C66 44 62 48 56 48H38L28 58V48H28C22 48 18 44 18 38V18Z" fill="url(#purpleGradient)"></path>
+
+  <!-- ⭐ 4-Point Star (moved slightly ABOVE) -->
+  <path d="M42 0L44.5 8L52 10L44.5 12L42 20L39.5 12L32 10L39.5 8Z" fill="url(#orangeGradient)"></path>
+
+  <!-- SmartChat Text (Black) -->
+  <text x="88" y="44" font-size="28" font-family="Outfit, sans-serif" font-weight="600" fill="#000000">
+    SmartChat
+  </text>
+
+  <!-- Tagline -->
+  <text x="90" y="66" font-size="14" font-family="Outfit, sans-serif" fill="url(#purpleGradient)">
+    Intelligent AI Chatbot
+  </text>
+</svg>
