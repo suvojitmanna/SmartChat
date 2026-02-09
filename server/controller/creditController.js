@@ -2,8 +2,6 @@ import Transition from "../models/transition.js";
 import Stripe from "stripe";
 import "dotenv/config";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 export const dummyPlans = [
   {
     _id: "basic",
@@ -37,7 +35,7 @@ export const dummyPlans = [
     credits: 1000,
     features: [
       "✔ 1000 text generations",
-      "✔ 500 image generations",
+      " ✔ 500 image generations",
       "✔ 24/7 VIP support",
       "✔ Access to premium models",
       "✔ Dedicated account manager",
@@ -45,19 +43,27 @@ export const dummyPlans = [
   },
 ];
 
-// Get Plans
+//API controller for getting all plan
 export const getplans = async (req, res) => {
-  res.json({ success: true, plans: dummyPlans });
+  try {
+    res.json({ success: true, plans: dummyPlans });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
 };
 
-// Purchase Plan
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+//Api Controller for purchasing a plan
 export const purchaseplan = async (req, res) => {
   try {
     const { planId } = req.body;
     const userId = req.user._id;
 
     const plan = dummyPlans.find((p) => p._id === planId);
-    if (!plan) return res.json({ success: false, message: "Invalid plan" });
+    if (!plan) {
+      return res.json({ success: false, message: "Invalid plan" });
+    }
 
     const transition = await Transition.create({
       userId,
@@ -66,6 +72,9 @@ export const purchaseplan = async (req, res) => {
       credits: plan.credits,
       isPaid: false,
     });
+
+    const successUrl = `${process.env.CLIENT_URL}/loading`;
+    const cancelUrl = `${process.env.CLIENT_URL}`;
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -79,23 +88,17 @@ export const purchaseplan = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/loading`,
-      cancel_url: `${process.env.CLIENT_URL}`,
-
-      // 🔥 CRITICAL FIX — metadata must go inside payment_intent_data
-      payment_intent_data: {
-        metadata: {
-          transitionId: transition._id.toString(),
-          appId: "smartgpt",
-        },
-      },
-
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: { transitionId: transition._id.toString(), appId: "smartgpt" },
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
     });
 
     res.json({ success: true, url: session.url });
+
   } catch (error) {
     console.log("Stripe Error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
