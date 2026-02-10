@@ -31,34 +31,34 @@ export const purchaseplan = async (req, res) => {
     });
 
     const session = await stripe.checkout.sessions.create({
-  payment_method_types: ["card"],
-  mode: "payment",
-  line_items: [
-    {
-      price_data: {
-        currency: "usd",
-        unit_amount: plan.price * 100,
-        product_data: { name: plan.name },
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            unit_amount: plan.price * 100,
+            product_data: { name: plan.name },
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${process.env.CLIENT_URL}/loading`,
+      cancel_url: `${process.env.CLIENT_URL}`,
+
+      metadata: {
+        transitionId: transition._id.toString(),
+        appId: "smartgpt",
       },
-      quantity: 1,
-    },
-  ],
-  success_url: `${process.env.CLIENT_URL}/loading`,
-  cancel_url: `${process.env.CLIENT_URL}`,
 
-  metadata: {
-    transitionId: transition._id.toString(),
-    appId: "smartgpt",
-  },
-
-  // 🔥 THIS FIXES EVERYTHING
-  payment_intent_data: {
-    metadata: {
-      transitionId: transition._id.toString(),
-      appId: "smartgpt",
-    },
-  },
-});
+      // 🔥 THIS FIXES EVERYTHING
+      payment_intent_data: {
+        metadata: {
+          transitionId: transition._id.toString(),
+          appId: "smartgpt",
+        },
+      },
+    });
 
     res.json({ success: true, url: session.url });
   } catch (error) {

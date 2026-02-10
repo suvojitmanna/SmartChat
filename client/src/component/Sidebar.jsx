@@ -208,6 +208,12 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
             />
           )}
         </div>
+        <div className="mt-auto">
+  <p className="mt-6 text-[11px] text-center text-gray-400 dark:text-gray-500">
+    Created by <span className="text-purple-500 font-medium">Suvojit Manna</span>
+  </p>
+</div>
+
       </div>
     </>
   );

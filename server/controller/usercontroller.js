@@ -33,7 +33,7 @@ export const registerUser = async (req, res) => {
     const user = await User.create({ name, email, password });
 
     res.status(201).json({
-      success: true, // 🔥 IMPORTANT
+      success: true, // IMPORTANT
       user: {
         _id: user._id,
         name: user.name,
@@ -78,7 +78,7 @@ export const loginUser = async (req, res) => {
     }
 
     res.status(200).json({
-      success: true, // 🔥 IMPORTANT
+      success: true, // IMPORTANT
       user: {
         _id: user._id,
         name: user.name,

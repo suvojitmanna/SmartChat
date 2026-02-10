@@ -20,7 +20,7 @@ export const stripeWebhooks = async (req, res) => {
   }
 
   try {
-    // 🔥 CASE 1 — Preferred
+    // CASE 1 — Preferred
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const { transitionId, appId } = session.metadata;
@@ -30,7 +30,7 @@ export const stripeWebhooks = async (req, res) => {
       await processCredit(transitionId);
     }
 
-    // 🔥 CASE 2 — Fallback if checkout event missed
+    // CASE 2 — Fallback if checkout event missed
     if (event.type === "payment_intent.succeeded") {
       const paymentIntent = event.data.object;
 
@@ -54,7 +54,7 @@ export const stripeWebhooks = async (req, res) => {
   }
 };
 
-// 💰 Credit processor
+// Credit processor
 async function processCredit(transitionId) {
   const transition = await Transition.findOne({
     _id: transitionId,
