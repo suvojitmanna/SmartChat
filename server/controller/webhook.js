@@ -15,46 +15,64 @@ export const stripeWebhooks = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.error("❌ Webhook signature verification failed:", err.message);
+    console.error("Webhook signature error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   try {
-    // 🔥 Use checkout.session.completed for Stripe Checkout
+    // 🔥 CASE 1 — Preferred
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-
       const { transitionId, appId } = session.metadata;
 
-      if (appId !== "smartgpt") {
-        return res.json({ received: true });
-      }
+      if (appId !== "smartgpt") return res.json({ received: true });
 
-      const transition = await Transition.findOne({
-        _id: transitionId,
-        isPaid: false,
+      await processCredit(transitionId);
+    }
+
+    // 🔥 CASE 2 — Fallback if checkout event missed
+    if (event.type === "payment_intent.succeeded") {
+      const paymentIntent = event.data.object;
+
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: paymentIntent.id,
       });
 
-      if (!transition) {
-        console.log("⚠️ Transaction already processed or not found");
-        return res.json({ received: true });
-      }
+      const session = sessions.data[0];
+      if (!session) return res.json({ received: true });
 
-      // 💰 Add credits
-      await User.updateOne(
-        { _id: transition.userId },
-        { $inc: { credits: transition.credits } }
-      );
+      const { transitionId, appId } = session.metadata;
+      if (appId !== "smartgpt") return res.json({ received: true });
 
-      transition.isPaid = true;
-      await transition.save();
-
-      console.log("✅ Credits added:", transition.credits);
+      await processCredit(transitionId);
     }
 
     res.json({ received: true });
   } catch (error) {
-    console.error("🔥 Webhook processing error:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("Webhook processing error:", error);
+    res.status(500).send("Server Error");
   }
 };
+
+// 💰 Credit processor
+async function processCredit(transitionId) {
+  const transition = await Transition.findOne({
+    _id: transitionId,
+    isPaid: false,
+  });
+
+  if (!transition) {
+    console.log("Already processed or not found");
+    return;
+  }
+
+  await User.updateOne(
+    { _id: transition.userId },
+    { $inc: { credits: transition.credits } }
+  );
+
+  transition.isPaid = true;
+  await transition.save();
+
+  console.log("✅ Credits added:", transition.credits);
+}
