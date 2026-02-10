@@ -31,27 +31,27 @@ const Community = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="p-6 pt-12 xl:px-12 2xl:px-20 w-full mx-auto h-full overflow-y-scroll">
-      <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-purple-100">
+    <div className="p-4 sm:p-6 pt-10 sm:pt-12 xl:px-12 2xl:px-20 w-full mx-auto min-h-screen overflow-y-auto">
+      <h2 className="text-lg sm:text-xl font-semibold mb-6 text-gray-800 dark:text-purple-100 text-center sm:text-left">
         Community Images
       </h2>
 
       {images.length > 0 ? (
-        <div className="flex flex-wrap max-sm:justify-center gap-5">
+        <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
           {images.map((item, index) => (
             <a
               key={index}
               href={item.imageUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative group block rounded-lg overflow-hidden border border-gray-200 dark:border-purple-700 shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="relative group block rounded-lg overflow-hidden border border-gray-200 dark:border-purple-700 shadow-sm hover:shadow-md transition-all duration-300"
             >
               <img
                 src={item.imageUrl}
                 alt="Community"
-                className="w-full h-40 md:h-50 2xl:h-62 object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                className="w-full h-32 sm:h-40 md:h-44 lg:h-48 2xl:h-52 object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
               />
-              <p className="absolute bottom-0 right-0 text-xs bg-black/50 backdrop-blur text-white px-4 py-1 rounded-tl-xl opacity-0 group-hover:opacity-100 transition duration-300">
+              <p className="absolute bottom-0 right-0 text-[10px] sm:text-xs bg-black/50 backdrop-blur text-white px-3 py-1 rounded-tl-xl opacity-0 group-hover:opacity-100 transition duration-300">
                 Created by {item.userName}
               </p>
             </a>

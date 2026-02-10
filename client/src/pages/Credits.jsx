@@ -26,33 +26,33 @@ const Credits = () => {
   };
 
   const purchasePlan = async (planId) => {
-  try {
-    const { data } = await axios.post(
-      "/api/credit/purchase",
-      { planId },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    try {
+      const { data } = await axios.post(
+        "/api/credit/purchase",
+        { planId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    if (data.success) {
-      window.location.href = data.url;
-    } else {
-      toast.error(data.message);
+      if (data.success) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
     }
-  } catch (error) {
-    toast.error(error.response?.data?.message || error.message);
-  }
-};
-
+  };
 
   useEffect(() => {
     setPlans(dummyPlans);
     setLoading(false);
+    // fetchplans(); // enable when backend is ready
   }, []);
 
   if (loading) return <Loading />;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16">
+    <div className="max-w-7xl mx-auto px-6 py-16 bg-transparent dark:bg-[#141218] min-h-screen">
       <h2 className="text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">
         Choose Your Credit Plan
       </h2>
@@ -70,11 +70,10 @@ const Credits = () => {
               className={`relative rounded-2xl p-8 transition-all duration-300 flex flex-col justify-between hover:-translate-y-2 hover:shadow-2xl
               ${
                 isPro
-                  ? "bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl scale-105"
-                  : "bg-white/70 dark:bg-gray-900/60 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 shadow-md hover:bg-white/40 dark:hover:bg-gray-900/40"
+                  ? "bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl dark:shadow-purple-900/40 scale-105"
+                  : "bg-white/80 dark:bg-[#1e1b24] border border-gray-200 dark:border-white/10 shadow-md dark:shadow-lg hover:bg-white/60 dark:hover:bg-[#26222d]"
               }`}
             >
-              {/* MOST POPULAR BADGE */}
               {isPro && (
                 <span className="absolute top-4 right-4 bg-white/90 backdrop-blur text-purple-700 text-xs font-bold px-4 py-1.5 rounded-full shadow-md tracking-wide">
                   ⭐ MOST POPULAR
@@ -96,19 +95,18 @@ const Credits = () => {
                     className={`ml-2 ${
                       isPro
                         ? "text-purple-100"
-                        : "text-gray-500 dark:text-gray-400"
+                        : "text-gray-500 dark:text-gray-300"
                     }`}
                   >
                     / {plan.credits} credits
                   </span>
                 </div>
 
-                {/* Features */}
                 <ul
                   className={`space-y-2 mb-8 ${
                     isPro
                       ? "text-purple-100"
-                      : "text-gray-600 dark:text-gray-300"
+                      : "text-gray-600 dark:text-gray-200"
                   }`}
                 >
                   {plan.features.map((feature, index) => (
@@ -137,7 +135,7 @@ const Credits = () => {
                 }`}
                 onClick={() =>
                   toast.promise(purchasePlan(plan._id), {
-                    loading: "processing...",
+                    loading: "Processing...",
                   })
                 }
               >

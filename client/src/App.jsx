@@ -25,7 +25,7 @@ const App = () => {
 
     {user ? (
       <div className="bg-white text-black dark:bg-gradient-to-b dark:from-[#242124] dark:to-[#000000] dark:text-white transition-colors duration-300">
-        <div className="flex h-screen w-screen">
+        <div className="flex min-h-screen w-screen">
           <Sidebar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
           <Routes>
             <Route path="/" element={<ChatBox />} />
