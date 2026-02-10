@@ -1,61 +1,60 @@
 import Stripe from "stripe";
 import Transition from "../models/transition.js";
 import User from "../models/user.js";
-export const stripeWebhooks = async (requestAnimationFrame, response) => {
+
+export const stripeWebhooks = async (req, res) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const sig = Request.headers["stripe-signature"];
+  const sig = req.headers["stripe-signature"];
 
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(
-      Request.body,
+      req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET,
+      process.env.STRIPE_WEBHOOK_SECRET
     );
-  } catch (error) {
-    return response.status(400).send(`Webhook Error : ${error.message}`);
+  } catch (err) {
+    console.error("❌ Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+
   try {
-    switch (event.type) {
-      case "payment_intent.succeeded":
-        {
-          const paymentIntent = event.data.object;
-          const sessionList = await stripe.checkout.sessions.list({
-            payment_intent: paymentIntent.id,
-          });
-          const session = sessionList.data[0];
-          const { transactionId, appId } = session.metadata;
+    // 🔥 Use checkout.session.completed for Stripe Checkout
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
 
-          if (appId === "smartgpt") {
-            const transition = await Transition.findOne({
-              _id: transactionId,
-              isPaid: false,
-            });
+      const { transitionId, appId } = session.metadata;
 
-            //update credits in user account
+      if (appId !== "smartgpt") {
+        return res.json({ received: true });
+      }
 
-            await User.updateOne(
-              { _id: transition.userId },
-              { $inc: { credits: transition.credits } },
-            );
-            //upload credit payment status
-            transition.isPaid = true;
-            await transition.save();
-          } else {
-            return response.json({
-              received: true,
-              message: "Ignored event: Invalid app",
-            });
-          }
-        }
-        break;
-      default:
-        console.log("Unhandled Event type:", event.type);
-        break;
+      const transition = await Transition.findOne({
+        _id: transitionId,
+        isPaid: false,
+      });
+
+      if (!transition) {
+        console.log("⚠️ Transaction already processed or not found");
+        return res.json({ received: true });
+      }
+
+      // 💰 Add credits
+      await User.updateOne(
+        { _id: transition.userId },
+        { $inc: { credits: transition.credits } }
+      );
+
+      transition.isPaid = true;
+      await transition.save();
+
+      console.log("✅ Credits added:", transition.credits);
     }
-    response.json({received:true})
+
+    res.json({ received: true });
   } catch (error) {
-    console.error("Webhook processing ereror:",error)
-    response.status(500).send('Internal Server Error')
+    console.error("🔥 Webhook processing error:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
