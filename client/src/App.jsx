@@ -25,15 +25,16 @@ const App = () => {
 
     {user ? (
       <div className="bg-white text-black dark:bg-gradient-to-b dark:from-[#242124] dark:to-[#000000] dark:text-white transition-colors duration-300">
-        <div className="flex h-screen w-screen md:overflow-hidden">
-          <Sidebar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
-          <Routes>
-            <Route path="/" element={<ChatBox />} />
-            <Route path="/credits" element={<Credits />} />
-            <Route path="/community" element={<Community />} />
-          </Routes>
-        </div>
-      </div>
+  <div className="flex h-screen w-full overflow-hidden">
+    <Sidebar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+      <Routes>
+        <Route path="/" element={<ChatBox />} />
+        <Route path="/credits" element={<Credits />} />
+        <Route path="/community" element={<Community />} />
+      </Routes>
+    </div>
+
+  </div>
     ):(
       <div>
         <Login/>
