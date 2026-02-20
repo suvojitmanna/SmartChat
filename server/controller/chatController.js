@@ -1,6 +1,6 @@
 import Chat from "../models/chat.js";
 
-// API controller for creating a new chat
+// Create New Chat
 export const createChat = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -14,7 +14,7 @@ export const createChat = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Chat created successfully",
+      chat, // ✅ IMPORTANT
     });
   } catch (error) {
     console.error("Create Chat Error:", error.message);
@@ -25,8 +25,7 @@ export const createChat = async (req, res) => {
   }
 };
 
-//API Controller for getting all chats
-
+// Get All Chats
 export const getChats = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -46,8 +45,7 @@ export const getChats = async (req, res) => {
   }
 };
 
-//API Controller for Deletting all chats
-
+// Delete Chat
 export const deleteChat = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -57,12 +55,13 @@ export const deleteChat = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "chat Deleted",
+      message: "Chat Deleted",
     });
   } catch (error) {
-    res.json(500).json({
+    console.error("Delete Chat Error:", error.message);
+    res.status(500).json({
       success: false,
-      message: "Failed to fetch chats",
+      message: "Failed to delete chat",
     });
   }
 };

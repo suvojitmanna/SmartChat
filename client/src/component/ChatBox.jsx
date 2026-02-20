@@ -8,8 +8,15 @@ const ChatBox = () => {
   const containerRef = useRef(null);
   const controllerRef = useRef(null);
 
-  const { selectedChat, setSelectedChat, theme, user, axios, token, setUser } =
-    useAppcontext();
+  const {
+    selectedChat,
+    setSelectedChat,
+    theme,
+    user,
+    axios,
+    token,
+    setUser,
+  } = useAppcontext();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,7 +24,54 @@ const ChatBox = () => {
   const [mode, setMode] = useState("text");
   const [isPublished, setIsPublished] = useState(false);
 
-  // ✅ STOP FUNCTION
+  /* ================= CREATE NEW CHAT IF SESSION EMPTY ================= */
+  useEffect(() => {
+    const initChat = async () => {
+      const activeChatId = sessionStorage.getItem("activeChatId");
+
+      // If no active chat session → create new chat
+      if (!activeChatId && user && token) {
+        try {
+          const { data } = await axios.post(
+            "/api/chat/create",
+            {},
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (data.success) {
+            sessionStorage.setItem("activeChatId", data.chat._id);
+            setSelectedChat(data.chat);
+            setMessages(data.chat.messages || []);
+          }
+        } catch (error) {
+          console.error("Create chat failed");
+        }
+      }
+    };
+
+    initChat();
+  }, [user, token]);
+
+  /* ================= LOAD SELECTED CHAT ================= */
+  useEffect(() => {
+    if (selectedChat) {
+      setMessages(selectedChat.messages || []);
+    }
+  }, [selectedChat]);
+
+  /* ================= AUTO SCROLL ================= */
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
+
+  /* ================= STOP ================= */
   const handleStop = () => {
     if (controllerRef.current) {
       controllerRef.current.abort();
@@ -27,6 +81,7 @@ const ChatBox = () => {
     toast("Generation stopped");
   };
 
+  /* ================= SEND MESSAGE ================= */
   const onSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -40,27 +95,28 @@ const ChatBox = () => {
       const promptCopy = prompt;
       setPrompt("");
 
-      // Add user message instantly
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "user",
-          content: promptCopy,
-          timestamp: Date.now(),
-          isImage: false,
-        },
-      ]);
+      const userMessage = {
+        role: "user",
+        content: promptCopy,
+        timestamp: Date.now(),
+        isImage: false,
+      };
 
-      // ✅ Create AbortController
+      setMessages((prev) => [...prev, userMessage]);
+
       controllerRef.current = new AbortController();
 
       const { data } = await axios.post(
         `/api/message/${mode}`,
-        { chatId: selectedChat._id, prompt: promptCopy, isPublished },
+        {
+          chatId: selectedChat._id,
+          prompt: promptCopy,
+          isPublished,
+        },
         {
           headers: { Authorization: `Bearer ${token}` },
           signal: controllerRef.current.signal,
-        },
+        }
       );
 
       if (data.success) {
@@ -82,9 +138,7 @@ const ChatBox = () => {
         setPrompt(promptCopy);
       }
     } catch (error) {
-      if (error.name === "CanceledError") {
-        console.log("Request cancelled");
-      } else {
+      if (error.name !== "CanceledError") {
         toast.error(error.response?.data?.message || error.message);
       }
     } finally {
@@ -93,29 +147,12 @@ const ChatBox = () => {
     }
   };
 
-  useEffect(() => {
-    if (selectedChat) {
-      setMessages(selectedChat.messages || []);
-    } else {
-      setMessages([]);
-    }
-  }, [selectedChat]);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messages]);
-
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40">
-      {/* Chat Messages */}
+      {/* Messages */}
       <div
         ref={containerRef}
-        className="flex-1 mb-5 overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-gray-600 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-500 dark:hover:scrollbar-thumb-purple-500"
+        className="flex-1 mb-5 overflow-y-auto space-y-3"
       >
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -148,21 +185,6 @@ const ChatBox = () => {
           </div>
         )}
       </div>
-
-      {/* Publish Option */}
-      {mode === "image" && (
-        <label className="inline-flex items-center gap-2 mb-3 text-sm mx-auto cursor-pointer">
-          <p className="text-xs text-gray-600 dark:text-gray-400">
-            Publish Generated Image to Community
-          </p>
-          <input
-            type="checkbox"
-            className="w-4 h-4 accent-indigo-600"
-            checked={isPublished}
-            onChange={(e) => setIsPublished(e.target.checked)}
-          />
-        </label>
-      )}
 
       {/* Input */}
       <form
