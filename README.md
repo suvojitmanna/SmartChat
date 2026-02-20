@@ -1,6 +1,7 @@
 # SmartChat - AI-Powered Chat & Image Generation
 
-A full-stack MERN application that combines real-time chat functionality with AI-powered utilities like text generation and image creation. Built with modern technologies and designed for seamless user experience.
+A full-stack MERN application that combines real-time chat functionality with AI-powered utilities like text generation and image creation. Built with modern technologies and designed for seamless user experience.</br>
+👉 Live Preview: https://smart-chat-client.vercel.app
 
 ## 🌟 Features
 
