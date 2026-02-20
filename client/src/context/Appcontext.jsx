@@ -9,6 +9,7 @@ const Appcontext = createContext();
 
 export const AppcontextProvider = ({ children }) => {
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -16,10 +17,11 @@ export const AppcontextProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loadingUser, setLoadingUser] = useState(true);
 
+  /* ================= FETCH USER ================= */
   const fetchUser = async () => {
     try {
-      const { data } = await axios.get("/api/user/data", {
-      });
+      const { data } = await axios.get("/api/user/data");
+
       if (data.success) {
         setUser(data.user);
       } else {
@@ -32,48 +34,53 @@ export const AppcontextProvider = ({ children }) => {
     }
   };
 
+  /* ================= CREATE NEW CHAT ================= */
   const createNewChat = async () => {
-  try {
-    if (!user) return toast.error("Login to create a new chat");
+    try {
+      if (!user) return toast.error("Login to create a new chat");
 
-    const { data } = await axios.get("/api/chat/create"); // ✅ POST not GET
+      const { data } = await axios.post("/api/chat/create");
 
-    if (data.success) {
-      await fetchUserChats();     // 🔥 REFRESH FROM SERVER
-      navigate("/");
-      toast.success("New chat created");
-    } else {
-      toast.error(data.message);
+      if (data.success) {
+        // add new chat at top
+        setChats((prev) => [data.chat, ...prev]);
+
+        // select this new chat
+        setSelectedChat(data.chat);
+
+        toast.success("New chat created");
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
     }
-  } catch (error) {
-    toast.error(error.response?.data?.message || error.message);
-  }
-};
+  };
 
-
-
-
+  /* ================= FETCH USER CHATS ================= */
   const fetchUserChats = async () => {
     try {
-      const { data } = await axios.get("/api/chat/get", {
-      });
+      const { data } = await axios.get("/api/chat/get");
+
       if (data.success) {
         setChats(data.chats);
-        //if the user has no chats,create one
-        if (data.chats.length === 0) {
-          await createNewChat();
+        setChats(data.chats);
 
-          const retry = await axios.get("/api/chat/get", {
-          });
+        const savedChatId = sessionStorage.getItem("activeChatId");
 
-          if (retry.data.success && retry.data.chats.length > 0) {
-            setChats(retry.data.chats);
-            setSelectedChat(retry.data.chats[0]);
+        if (savedChatId) {
+          const existingChat = data.chats.find(
+            (chat) => chat._id === savedChatId,
+          );
+
+          if (existingChat) {
+            setSelectedChat(existingChat);
+            return;
           }
-          return;
-        } else {
-          setSelectedChat(data.chats[0]);
         }
+
+        setSelectedChat(null);
       } else {
         toast.error(data.message);
       }
@@ -82,6 +89,7 @@ export const AppcontextProvider = ({ children }) => {
     }
   };
 
+  /* ================= THEME HANDLING ================= */
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -91,6 +99,7 @@ export const AppcontextProvider = ({ children }) => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  /* ================= USER CHANGED ================= */
   useEffect(() => {
     if (user) {
       fetchUserChats();
@@ -100,23 +109,19 @@ export const AppcontextProvider = ({ children }) => {
     }
   }, [user]);
 
+  /* ================= TOKEN HANDLING ================= */
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      fetchUser();
     } else {
       delete axios.defaults.headers.common["Authorization"];
+      setUser(null);
+      setLoadingUser(false);
     }
   }, [token]);
-  useEffect(() => {
-  if (token) {
-    fetchUser();
-  } else {
-    setUser(null);
-    setLoadingUser(false);
-  }
-}, [token]);
 
-
+  /* ================= CONTEXT VALUE ================= */
   const value = {
     navigate,
     user,

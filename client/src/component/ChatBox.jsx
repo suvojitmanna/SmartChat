@@ -11,6 +11,8 @@ const ChatBox = () => {
   const {
     selectedChat,
     setSelectedChat,
+    chats,
+    setChats,
     theme,
     user,
     axios,
@@ -22,138 +24,158 @@ const ChatBox = () => {
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState("text");
-  const [isPublished, setIsPublished] = useState(false);
-
-  /* ================= CREATE NEW CHAT IF SESSION EMPTY ================= */
-  useEffect(() => {
-    const initChat = async () => {
-      const activeChatId = sessionStorage.getItem("activeChatId");
-
-      // If no active chat session → create new chat
-      if (!activeChatId && user && token) {
-        try {
-          const { data } = await axios.post(
-            "/api/chat/create",
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-
-          if (data.success) {
-            sessionStorage.setItem("activeChatId", data.chat._id);
-            setSelectedChat(data.chat);
-            setMessages(data.chat.messages || []);
-          }
-        } catch (error) {
-          console.error("Create chat failed");
-        }
-      }
-    };
-
-    initChat();
-  }, [user, token]);
 
   /* ================= LOAD SELECTED CHAT ================= */
   useEffect(() => {
     if (selectedChat) {
       setMessages(selectedChat.messages || []);
+    } else {
+      setMessages([]);
+    }
+  }, [selectedChat]);
+
+  /* ================= SAVE ACTIVE CHAT (Refresh Safe) ================= */
+  useEffect(() => {
+    if (selectedChat?._id) {
+      sessionStorage.setItem("activeChatId", selectedChat._id);
     }
   }, [selectedChat]);
 
   /* ================= AUTO SCROLL ================= */
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
+    containerRef.current?.scrollTo({
+      top: containerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages]);
 
-  /* ================= STOP ================= */
+  /* ================= STOP BUTTON ================= */
   const handleStop = () => {
     if (controllerRef.current) {
       controllerRef.current.abort();
       controllerRef.current = null;
+      toast("Generation stopped");
     }
     setLoading(false);
-    toast("Generation stopped");
+  };
+
+  /* ================= CREATE CHAT IF NEEDED ================= */
+  const createChatIfNeeded = async () => {
+    if (selectedChat?._id) return selectedChat._id;
+
+    try {
+      const { data } = await axios.post(
+        "/api/chat/create",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (data.success) {
+        setChats((prev) => [data.chat, ...prev]);
+        setSelectedChat(data.chat);
+        return data.chat._id;
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+
+    return null;
   };
 
   /* ================= SEND MESSAGE ================= */
   const onSubmit = async (e) => {
+    e.preventDefault();
+    if (loading || !prompt.trim() || !user) return;
+
+    setLoading(true);
+
+    const promptCopy = prompt;
+    setPrompt("");
+
+    const chatId = await createChatIfNeeded();
+    if (!chatId) {
+      setLoading(false);
+      return;
+    }
+
+    const userMessage = {
+      role: "user",
+      content: promptCopy,
+      timestamp: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+
     try {
-      e.preventDefault();
-
-      if (loading) return;
-      if (!user) return toast("Login to send message");
-      if (!selectedChat?._id) return toast.error("No chat selected");
-
-      setLoading(true);
-
-      const promptCopy = prompt;
-      setPrompt("");
-
-      const userMessage = {
-        role: "user",
-        content: promptCopy,
-        timestamp: Date.now(),
-        isImage: false,
-      };
-
-      setMessages((prev) => [...prev, userMessage]);
-
       controllerRef.current = new AbortController();
 
       const { data } = await axios.post(
         `/api/message/${mode}`,
-        {
-          chatId: selectedChat._id,
-          prompt: promptCopy,
-          isPublished,
-        },
+        { chatId, prompt: promptCopy },
         {
           headers: { Authorization: `Bearer ${token}` },
           signal: controllerRef.current.signal,
-        }
+        },
       );
 
       if (data.success) {
-        const newReply = { ...data.reply, isNew: true };
+        const newReply = data.reply;
 
         setMessages((prev) => [...prev, newReply]);
 
-        setSelectedChat((prev) => ({
-          ...prev,
-          messages: [...(prev.messages || []), newReply],
-        }));
+        // Update selected chat safely
+        setSelectedChat((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            messages: [...(prev.messages || []), userMessage, newReply],
+            updatedAt: new Date(),
+          };
+        });
+
+        // Move chat to top safely
+        setChats((prevChats) => {
+          const existingChat = prevChats.find((chat) => chat._id === chatId);
+
+          if (!existingChat) return prevChats;
+
+          const filtered = prevChats.filter((chat) => chat._id !== chatId);
+
+          const updatedChat = {
+            ...existingChat,
+            messages: [...(existingChat.messages || []), userMessage, newReply],
+            updatedAt: new Date(),
+          };
+
+          return [updatedChat, ...filtered];
+        });
 
         setUser((prev) => ({
           ...prev,
-          credits: prev.credits - (mode === "image" ? 5 : 1),
+          credits: prev.credits - 1,
         }));
       } else {
         toast.error(data.message);
-        setPrompt(promptCopy);
       }
     } catch (error) {
-      if (error.name !== "CanceledError") {
-        toast.error(error.response?.data?.message || error.message);
+      if (error.code === "ERR_CANCELED" || error.name === "CanceledError") {
+        console.log("Request aborted");
+        return;
       }
+
+      toast.error(error.response?.data?.message || error.message);
     } finally {
-      setLoading(false);
       controllerRef.current = null;
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40">
       {/* Messages */}
-      <div
-        ref={containerRef}
-        className="flex-1 mb-5 overflow-y-auto space-y-3"
-      >
+      <div ref={containerRef} className="flex-1 mb-5 overflow-y-auto space-y-3">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <img
@@ -168,7 +190,7 @@ const ChatBox = () => {
         )}
 
         {messages.map((msg, index) => (
-          <Message key={index} message={msg} />
+          <Message key={msg._id || msg.timestamp || index} message={msg} />
         ))}
 
         {loading && (

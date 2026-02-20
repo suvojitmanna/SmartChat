@@ -59,15 +59,15 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
       )}
 
       <div
-  onClick={(e) => e.stopPropagation()}
-  className={`flex flex-col min-h-screen md:h-screen 
+        onClick={(e) => e.stopPropagation()}
+        className={`flex flex-col min-h-screen md:h-screen 
   w-72 max-w-[80%] md:w-72 p-5 
   dark:bg-gradient-to-b dark:from-[#242124]/30 dark:to-[#000000]/30
   border-r border-[#80609F]/30 backdrop-blur-3xl 
   transition-all duration-500 max-md:absolute left-0 z-50 ${
     !isMenuOpen && "max-md:-translate-x-full max-md:pointer-events-none"
   }`}
->
+      >
         <img
           src={theme === "dark" ? assets.logo_full : assets.logo_full_dark}
           className="w-full max-w-48"
@@ -210,11 +210,11 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
           )}
         </div>
         <div className="mt-auto">
-  <p className="mt-6 text-[11px] text-center text-gray-400 dark:text-gray-500">
-    Created by <span className="text-purple-500 font-medium">Suvojit Manna</span>
-  </p>
-</div>
-
+          <p className="mt-6 text-[11px] text-center text-gray-400 dark:text-gray-500">
+            Created by{" "}
+            <span className="text-purple-500 font-medium">Suvojit Manna</span>
+          </p>
+        </div>
       </div>
     </>
   );
