@@ -11,7 +11,6 @@ const ChatBox = () => {
   const {
     selectedChat,
     setSelectedChat,
-    chats,
     setChats,
     theme,
     user,
@@ -54,12 +53,14 @@ const ChatBox = () => {
     if (controllerRef.current) {
       controllerRef.current.abort();
       controllerRef.current = null;
-      toast("Generation stopped");
+      toast("Generation stopped", {
+        icon: "❌",
+      });
     }
     setLoading(false);
   };
 
-  /* ================= CREATE CHAT IF NEEDED ================= */
+  /* ================= SEND MESSAGE  ================= */
   const createChatIfNeeded = async () => {
     if (selectedChat?._id) return selectedChat._id;
 
@@ -75,6 +76,9 @@ const ChatBox = () => {
       if (data.success) {
         setChats((prev) => [data.chat, ...prev]);
         setSelectedChat(data.chat);
+        toast("Send Message successfully", {
+          icon: "🎉",
+        });
         return data.chat._id;
       }
     } catch (error) {
@@ -84,7 +88,7 @@ const ChatBox = () => {
     return null;
   };
 
-  /* ================= SEND MESSAGE ================= */
+  /* ================= CHAT ================= */
   const onSubmit = async (e) => {
     e.preventDefault();
     if (loading || !prompt.trim() || !user) return;
@@ -156,8 +160,9 @@ const ChatBox = () => {
           ...prev,
           credits: prev.credits - 1,
         }));
+        toast.success("Chat create Successfully...🎉");
       } else {
-        toast.error(data.message);
+        toast.error("⚠️",data.message);
       }
     } catch (error) {
       if (error.code === "ERR_CANCELED" || error.name === "CanceledError") {

@@ -4,7 +4,7 @@ import Chat from "../models/chat.js";
 import User from "../models/user.js";
 import axios from "axios";
 
-  //TEXT MESSAGE CONTROLLER (Gemini)
+//TEXT MESSAGE CONTROLLER (Gemini)
 export const textMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -56,7 +56,7 @@ export const textMessageController = async (req, res) => {
   }
 };
 
-  //IMAGE GENERATION CONTROLLER
+//IMAGE GENERATION CONTROLLER
 export const imageMessageController = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -75,7 +75,7 @@ export const imageMessageController = async (req, res) => {
         .json({ success: false, message: "Chat not found" });
     }
 
-    // Save user prompt
+    // ================= SAVE USER MESSAGE =================
     chat.messages.push({
       role: "user",
       content: prompt,
@@ -83,23 +83,33 @@ export const imageMessageController = async (req, res) => {
       isImage: false,
     });
 
-    const encodedPrompt = encodeURIComponent(prompt);
+    // ================= CLIPDROP IMAGE GENERATION =================
+    const clipdropResponse = await axios.post(
+      "https://clipdrop-api.co/text-to-image/v1",
+      {
+        prompt: prompt,
+      },
+      {
+        headers: {
+          "x-api-key": process.env.CLIPDROP_API_KEY,
+        },
+        responseType: "arraybuffer", // ✅ important
+      },
+    );
 
-    // Generate AI image URL from ImageKit
-    const generatedImageUrl = `${process.env.IMAGEKIT_URL_ENDPOINT}/ik-genimg-prompt-${encodedPrompt}/quickgpt/${Date.now()}.png?tr=w-800,h-800`;
+    // ================= CONVERT TO BASE64 =================
+    const base64Image = `data:image/png;base64,${Buffer.from(
+      clipdropResponse.data,
+    ).toString("base64")}`;
 
-    const aiImageResponse = await axios.get(generatedImageUrl, {
-      responseType: "arraybuffer",
-    });
-
-    const base64Image = `data:image/png;base64,${Buffer.from(aiImageResponse.data).toString("base64")}`;
-
+    // ================= UPLOAD TO IMAGEKIT =================
     const uploadResponse = await imagekit.upload({
       file: base64Image,
       fileName: `${Date.now()}.png`,
       folder: "smartgpt",
     });
 
+    // ================= SAVE AI RESPONSE =================
     const reply = {
       role: "assistant",
       content: uploadResponse.url,
@@ -111,11 +121,15 @@ export const imageMessageController = async (req, res) => {
     chat.messages.push(reply);
     await chat.save();
 
+    // ================= DEDUCT CREDITS =================
     await User.updateOne({ _id: userId }, { $inc: { credits: -2 } });
 
     res.status(200).json({ success: true, reply });
   } catch (error) {
-    console.error("Image Message Error:", error);
-    res.status(500).json({ success: false, message: error.message });
+    console.error("ClipDrop Image Error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

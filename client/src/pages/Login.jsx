@@ -8,7 +8,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { axios, setToken,navigate } = useAppcontext();
+  const { axios, setToken, navigate } = useAppcontext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         toast.success(state === "login" ? "Logged in!" : "Account created!");
-        navigate('/')
+        navigate("/");
       } else {
         toast.error(data.message);
       }

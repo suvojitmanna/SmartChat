@@ -1,14 +1,19 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { assets } from "../assets/assets";
 import moment from "moment";
 import Markdown from "react-markdown";
 import prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
+import toast from "react-hot-toast";
 
 const Message = ({ message }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
   const bottomRef = useRef(null);
+
+  const wordRefs = useRef([]);
 
   /* ================= Typing Animation ================= */
   useEffect(() => {
@@ -55,27 +60,150 @@ const Message = ({ message }) => {
       await navigator.clipboard.writeText(message.content);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+      toast.success("Copied! 📋");
     } catch (err) {
       console.error("Copy failed", err);
     }
   };
 
+  const handleSpeak = (text) => {
+    if (!text) return;
+
+    window.speechSynthesis.cancel();
+
+    if (speaking) {
+      setSpeaking(false);
+      setCurrentWordIndex(-1);
+      toast.success("Speaker Off...🔇", { icon: "❌" });
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-IN";
+    utterance.rate = 0.95;
+
+    const words = text.split(" ");
+
+    let fallbackInterval = null;
+    let usedBoundary = false;
+
+    utterance.onboundary = (event) => {
+      if (event.name === "word") {
+        usedBoundary = true;
+
+        const charIndex = event.charIndex;
+        const wordIndex = text.substring(0, charIndex).split(" ").length - 1;
+
+        setCurrentWordIndex(wordIndex);
+      }
+    };
+
+    //  Start fallback ONLY if boundary not working
+    utterance.onstart = () => {
+      setSpeaking(true);
+
+      setTimeout(() => {
+        if (!usedBoundary) {
+          let i = 0;
+
+          fallbackInterval = setInterval(() => {
+            setCurrentWordIndex(i++);
+            if (i >= words.length) {
+              clearInterval(fallbackInterval);
+            }
+          }, 400);
+        }
+      }, 500);
+    };
+
+    utterance.onend = () => {
+      setSpeaking(false);
+      setCurrentWordIndex(-1);
+      if (fallbackInterval) clearInterval(fallbackInterval);
+    };
+
+    utterance.onerror = () => {
+      setSpeaking(false);
+      setCurrentWordIndex(-1);
+      if (fallbackInterval) clearInterval(fallbackInterval);
+    };
+
+    //  MOBILE FIX: ensure voices are loaded
+    const speakNow = () => {
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = speakNow;
+    } else {
+      speakNow();
+    }
+    toast.success("Speaker On...🔊");
+  };
+
+  useEffect(() => {
+    if (!speaking) return;
+
+    const el = wordRefs.current[currentWordIndex];
+
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [currentWordIndex, speaking]);
+
+  useEffect(() => {
+    // Force load voices (mobile bug fix)
+    window.speechSynthesis.getVoices();
+
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }, []);
+
   /* ================= Share ================= */
   const handleShare = async () => {
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "Shared Message",
-          text: message.content,
+      // ================= IMAGE SHARE =================
+      if (message.isImage) {
+        const response = await fetch(message.content);
+        const blob = await response.blob();
+
+        const file = new File([blob], "image.png", {
+          type: blob.type || "image/png",
         });
-      } else {
-        await navigator.clipboard.writeText(message.content);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-        alert("Sharing not supported. Message copied instead!");
+
+        // Check support
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: "Shared Image",
+          });
+          toast.success("Image share Successfully! 🖼️");
+        } else {
+          toast.error("Image sharing not supported on this device ❌");
+        }
+      }
+
+      // ================= TEXT SHARE =================
+      else {
+        if (navigator.share) {
+          await navigator.share({
+            title: "Shared Message",
+            text: message.content,
+          });
+          toast.success("Text share Successfully! 🔗");
+        } else {
+          await navigator.clipboard.writeText(message.content);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+          alert("Sharing not supported. Text copied instead!");
+        }
       }
     } catch (err) {
-      console.error("Share failed", err);
+      toast.error("Share failed", err);
     }
   };
 
@@ -159,39 +287,42 @@ const Message = ({ message }) => {
             shadow-lg transition hover:shadow-xl"
           >
             <div className="absolute top-2 right-2 flex gap-2">
-              <button
-                onClick={handleCopy}
-                className="p-1.5 rounded-lg
-              bg-gray-200/70 dark:bg-gray-800/70
-              hover:bg-gray-300 dark:hover:bg-gray-700 transition"
-              >
-                {copied ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <rect x="3" y="3" width="13" height="13" rx="2" ry="2" />
-                  </svg>
-                )}
-              </button>
+              {/* copy */}
+              {!message.isImage && (
+                <button
+                  onClick={handleCopy}
+                  className="p-1.5 rounded-lg
+    bg-gray-200/70 dark:bg-gray-800/70
+    hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+                >
+                  {copied ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <rect x="3" y="3" width="13" height="13" rx="2" />
+                    </svg>
+                  )}
+                </button>
+              )}
 
               {/* Share */}
               <button
@@ -216,6 +347,51 @@ const Message = ({ message }) => {
                   <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
                 </svg>
               </button>
+
+              {/* Speak */}
+              {!message.isImage && (
+                <button
+                  onClick={() => handleSpeak(message.content)}
+                  className="p-1.5 rounded-lg bg-gray-200/70 dark:bg-gray-800/70 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+                >
+                  {!speaking ? (
+                    <svg
+                      className="w-4 h-4 text-gray-700 dark:text-gray-300"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M11 5L6 9H2V15H6L11 19V5Z"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M15.54 8.46C16.47 9.39 17 10.66 17 12C17 13.33 16.47 14.6 15.54 15.54"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-4 h-4 text-gray-700 dark:text-gray-300"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M11 5L6 9H2V15H6L11 19V5Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M23 9L17 15M17 9L23 15"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                    </svg>
+                  )}
+                </button>
+              )}
             </div>
 
             {message.isImage ? (
@@ -226,7 +402,25 @@ const Message = ({ message }) => {
               />
             ) : (
               <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none break-words">
-                <Markdown>{displayedText}</Markdown>
+                {speaking ? (
+                  <div className="flex flex-wrap gap-1">
+                    {displayedText.split(" ").map((word, i) => (
+                      <span
+                        key={i}
+                        ref={(el) => (wordRefs.current[i] = el)}
+                        className={
+                          i === currentWordIndex
+                            ? "bg-[#649dff] text-black px-1 rounded"
+                            : ""
+                        }
+                      >
+                        {word}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <Markdown>{displayedText}</Markdown>
+                )}
               </div>
             )}
 
