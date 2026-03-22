@@ -66,6 +66,7 @@ const Message = ({ message }) => {
     }
   };
 
+  /* ================= Speak ================= */
   const handleSpeak = (text) => {
     if (!text) return;
 
