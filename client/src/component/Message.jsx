@@ -292,9 +292,7 @@ const Message = ({ message }) => {
               {!message.isImage && (
                 <button
                   onClick={handleCopy}
-                  className="p-1.5 rounded-lg
-    bg-gray-200/70 dark:bg-gray-800/70
-    hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+                  className="p-1.5 rounded-lg bg-gray-200/70 dark:bg-gray-800/70 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
                 >
                   {copied ? (
                     <svg
