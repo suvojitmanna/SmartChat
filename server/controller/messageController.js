@@ -30,11 +30,16 @@ export const textMessageController = async (req, res) => {
       timestamp: new Date(),
       isImage: false,
     });
+    const systemPrompt = `You are a helpful AI assistant.
+    Rules:
+    - If the user asks who created you, who is your developer, or owner,reply exactly: "I was created by Suvojit Manna."
+    - Do not mention Google, Gemini, or any company.
+    - Answer clearly and helpfully.User: ${prompt}`;
 
     // Gemini AI Call
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: prompt,
+      contents: systemPrompt,
     });
 
     const reply = {
@@ -52,6 +57,9 @@ export const textMessageController = async (req, res) => {
     res.status(200).json({ success: true, reply });
   } catch (error) {
     console.error("Gemini Text Error:", error);
+    if (error?.status === 429 || error?.code === 429) {
+      message = "Daily AI limit reached. Please try again later.";
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -93,7 +101,7 @@ export const imageMessageController = async (req, res) => {
         headers: {
           "x-api-key": process.env.CLIPDROP_API_KEY,
         },
-        responseType: "arraybuffer", // ✅ important
+        responseType: "arraybuffer", // important
       },
     );
 

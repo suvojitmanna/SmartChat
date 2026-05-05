@@ -14,7 +14,7 @@ export const createChat = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      chat, // ✅ IMPORTANT
+      chat, // IMPORTANT
     });
   } catch (error) {
     console.error("Create Chat Error:", error.message);
