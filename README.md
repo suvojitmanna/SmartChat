@@ -62,68 +62,199 @@ SmartChat is built on a robust MERN stack architecture, utilizing modern tooling
 
 ## 📁 Project Structure
 
+```text
 SmartChat/
-├── client/                  # React Frontend (Vite)
+├── client/                     # React Frontend (Vite)
 │   ├── src/
-│   │   ├── component/       # ChatBox, Message, Sidebar
-│   │   ├── pages/           # Login, Community, Credits, Loading
-│   │   ├── context/         # AppContext state management
-│   │   └── assets/          # Static UI assets
+│   │   ├── components/         # Reusable UI components
+│   │   ├── pages/              # Login, Community, Credits, Loading
+│   │   ├── context/            # Global state management
+│   │   ├── assets/             # Images, icons, static assets
+│   │   └── App.jsx
+│   ├── public/
+│   ├── package.json
 │   └── tailwind.config.js
 │
-└── server/                  # Node.js Backend
-    ├── config/              # MongoDB, ImageKit, & AI config
-    ├── controller/          # Route logic (Chat, User, Credits, Webhook)
-    ├── middlewares/         # JWT Auth guards
-    ├── models/              # Mongoose Schemas (User, Chat, Transition)
-    └── routes/              # Express API definitions
-🚀 Getting Started
-Follow these steps to set up a local development environment.
+├── server/                     # Express Backend
+│   ├── config/                 # Database, AI & ImageKit configuration
+│   ├── controller/             # Business logic
+│   ├── middlewares/            # Authentication & middleware
+│   ├── models/                 # MongoDB schemas
+│   ├── routes/                 # API routes
+│   ├── package.json
+│   └── server.js
+│
+└── README.md
+```
 
-1. Prerequisites
-Node.js (v18 or higher)
+---
 
-MongoDB Atlas account (or local MongoDB)
+# 🚀 Getting Started
 
-API Keys: Google Generative AI, Stripe, and ImageKit
+Follow these steps to run SmartChat locally.
 
-2. Clone the Repository
-git clone [https://github.com/suvojitmanna/SmartChat.git](https://github.com/suvojitmanna/SmartChat.git)
+## 1️⃣ Prerequisites
+
+Make sure you have installed:
+
+- Node.js (v18 or later)
+- npm
+- MongoDB Atlas (or local MongoDB)
+- Git
+
+You'll also need API keys for:
+
+- Google Generative AI
+- Stripe
+- ImageKit
+- Clerk (Authentication)
+
+---
+
+## 2️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/suvojitmanna/SmartChat.git
+
 cd SmartChat
+```
 
-4. Backend Setup
+---
+
+## 3️⃣ Backend Setup
+
+Navigate to the backend folder:
+
+```bash
 cd server
-npm install
-Create a .env file in the /server directory:
+```
 
-Code snippet
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a **`.env`** file inside the `server` folder.
+
+```env
 MONGODB_URI=your_mongodb_connection_string
+
 JWT_SECRET=your_jwt_secret
-GOOGLE_API_KEY=your_google_generative_ai_key
+
+GOOGLE_API_KEY=your_google_ai_api_key
+
 STRIPE_SECRET_KEY=your_stripe_secret_key
+
 IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
+
 SVIX_WEBHOOK_SECRET=your_svix_webhook_secret
+
 PORT=5000
+```
 
-Start the backend:
+Start the backend server:
 
-Bash
+```bash
 npm run dev
-4. Frontend Setup
-Open a new terminal tab and navigate to the frontend:
+```
 
-Bash
+Backend runs on:
+
+```
+http://localhost:5000
+```
+
+---
+
+## 4️⃣ Frontend Setup
+
+Open another terminal.
+
+Navigate to the client folder:
+
+```bash
 cd client
-npm install
-Create a .env.local file in the /client directory:
+```
 
-Code snippet
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a **`.env.local`** file.
+
+```env
 VITE_API_URL=http://localhost:5000
+
 VITE_IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 VITE_IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
+```
+
 Start the frontend:
 
-Bash
+```bash
 npm run dev
+```
+
+Frontend runs on:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 🔑 Environment Variables
+
+### Server (.env)
+
+| Variable | Description |
+|----------|-------------|
+| `MONGODB_URI` | MongoDB connection string |
+| `JWT_SECRET` | JWT authentication secret |
+| `GOOGLE_API_KEY` | Google Gemini API key |
+| `STRIPE_SECRET_KEY` | Stripe Secret Key |
+| `IMAGEKIT_PRIVATE_KEY` | ImageKit Private Key |
+| `IMAGEKIT_PUBLIC_KEY` | ImageKit Public Key |
+| `IMAGEKIT_URL_ENDPOINT` | ImageKit URL Endpoint |
+| `SVIX_WEBHOOK_SECRET` | Clerk Webhook Secret |
+| `PORT` | Backend Port |
+
+### Client (.env.local)
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Backend API URL |
+| `VITE_IMAGEKIT_PUBLIC_KEY` | ImageKit Public Key |
+| `VITE_IMAGEKIT_URL_ENDPOINT` | ImageKit URL Endpoint |
+
+---
+
+# ▶️ Run the Application
+
+Start backend:
+
+```bash
+cd server
+npm run dev
+```
+
+Start frontend:
+
+```bash
+cd client
+npm run dev
+```
+
+Visit:
+
+```
+Frontend:
+http://localhost:5173
+
+Backend:
+http://localhost:5000
