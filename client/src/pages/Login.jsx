@@ -11,28 +11,28 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { axios, setToken, navigate } = useAppcontext();
 
-const handleSuccess = async (credentialResponse) => {
-  try {
-    const { data } = await axios.post("/api/user/google-login", {
-      credential: credentialResponse.credential,
-    });
+  const handleSuccess = async (credentialResponse) => {
+    try {
+      const { data } = await axios.post("/api/user/google-login", {
+        credential: credentialResponse.credential,
+      });
 
-    if (!data.success) {
-      return toast.error(data.message);
+      if (!data.success) {
+        return toast.error(data.message);
+      }
+
+      setToken(data.token);
+      localStorage.setItem("token", data.token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+
+      toast.success("Google Login Successful 🎉");
+
+      navigate("/");
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      toast.error(error.response?.data?.message || error.message);
     }
-
-    setToken(data.token);
-    localStorage.setItem("token", data.token);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-
-    toast.success("Google Login Successful 🎉");
-
-    navigate("/");
-  } catch (error) {
-    console.error("Google Login Error:", error);
-    toast.error(error.response?.data?.message || error.message);
-  }
-};
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,16 +57,16 @@ const handleSuccess = async (credentialResponse) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-purple-950 to-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-purple-950 to-gray-950 px-4 sm:px-6 lg:px-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md text-center bg-gray-900/80 backdrop-blur-md border border-gray-700/50 hover:border-indigo-500/30 rounded-2xl px-8 py-10 shadow-2xl transition-all duration-300"
+        className="w-full max-w-md text-center bg-gray-900/80 backdrop-blur-md border border-gray-700/50 hover:border-indigo-500/30 rounded-2xl px-6 py-8 sm:px-8 sm:py-10 shadow-2xl transition-all duration-300"
       >
-        <h1 className="text-white text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+        <h1 className="text-white text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent transition-all">
           {state === "login" ? "Welcome Back 👋" : "Create Account 🚀"}
         </h1>
 
-        <p className="text-gray-400 text-sm mt-3">
+        <p className="text-gray-400 text-xs sm:text-sm mt-2 sm:mt-3">
           {state === "login"
             ? "Login to continue your journey"
             : "Sign up to get started"}
@@ -74,11 +74,11 @@ const handleSuccess = async (credentialResponse) => {
 
         {/* Name Field */}
         {state !== "login" && (
-          <div className="flex items-center mt-8 w-full bg-gray-800/50 border border-gray-700 hover:border-indigo-500/50 h-12 rounded-full px-5 focus-within:border-indigo-500 focus-within:bg-gray-800 transition-all duration-200">
+          <div className="flex items-center mt-6 sm:mt-8 w-full bg-gray-800/50 border border-gray-700 hover:border-indigo-500/50 h-11 sm:h-12 rounded-full px-4 sm:px-5 focus-within:border-indigo-500 focus-within:bg-gray-800 transition-all duration-200">
             <input
               type="text"
               placeholder="Full Name"
-              className="w-full bg-transparent text-white placeholder-gray-400 outline-none text-sm"
+              className="w-full bg-transparent text-white placeholder-gray-400 outline-none text-sm sm:text-base"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -87,11 +87,11 @@ const handleSuccess = async (credentialResponse) => {
         )}
 
         {/* Email */}
-        <div className="flex items-center w-full mt-6 bg-gray-800/50 border border-gray-700 hover:border-indigo-500/50 h-12 rounded-full px-5 focus-within:border-indigo-500 focus-within:bg-gray-800 transition-all duration-200">
+        <div className="flex items-center w-full mt-5 sm:mt-6 bg-gray-800/50 border border-gray-700 hover:border-indigo-500/50 h-11 sm:h-12 rounded-full px-4 sm:px-5 focus-within:border-indigo-500 focus-within:bg-gray-800 transition-all duration-200">
           <input
             type="email"
             placeholder="Email Address"
-            className="w-full bg-transparent text-white placeholder-gray-400 outline-none text-sm"
+            className="w-full bg-transparent text-white placeholder-gray-400 outline-none text-sm sm:text-base"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -99,11 +99,11 @@ const handleSuccess = async (credentialResponse) => {
         </div>
 
         {/* Password */}
-        <div className="flex items-center mt-6 w-full bg-gray-800/50 border border-gray-700 hover:border-indigo-500/50 h-12 rounded-full px-5 focus-within:border-indigo-500 focus-within:bg-gray-800 transition-all duration-200">
+        <div className="flex items-center mt-5 sm:mt-6 w-full bg-gray-800/50 border border-gray-700 hover:border-indigo-500/50 h-11 sm:h-12 rounded-full px-4 sm:px-5 focus-within:border-indigo-500 focus-within:bg-gray-800 transition-all duration-200">
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="w-full bg-transparent text-white placeholder-gray-400 outline-none text-sm"
+            className="w-full bg-transparent text-white placeholder-gray-400 outline-none text-sm sm:text-base"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -112,13 +112,14 @@ const handleSuccess = async (credentialResponse) => {
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="ml-2 text-gray-400 hover:text-indigo-400 transition-colors duration-200"
+            className="ml-2 text-gray-400 hover:text-indigo-400 p-1 transition-colors duration-200 focus:outline-none"
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
               /* Eye Off Icon */
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
+                className="w-5 h-5 sm:w-5 sm:h-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -134,7 +135,7 @@ const handleSuccess = async (credentialResponse) => {
               /* Eye Icon */
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
+                className="w-5 h-5 sm:w-5 sm:h-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -158,16 +159,20 @@ const handleSuccess = async (credentialResponse) => {
         {/* Submit */}
         <button
           type="submit"
-          className="mt-8 w-full h-11 rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 transition-all duration-200 font-semibold shadow-lg hover:shadow-indigo-500/50 cursor-pointer"
+          className="mt-6 sm:mt-8 w-full h-11 sm:h-12 rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 transition-all duration-200 font-semibold shadow-lg hover:shadow-indigo-500/50 cursor-pointer text-sm sm:text-base"
         >
           {state === "login" ? "Login" : "Create Account"}
         </button>
-        <div className="flex items-center my-5">
+
+        <div className="flex items-center my-5 sm:my-6">
           <div className="flex-1 h-px bg-gray-700"></div>
-          <span className="px-4 text-gray-400 text-sm">OR</span>
+          <span className="px-3 sm:px-4 text-gray-400 text-xs sm:text-sm">
+            OR
+          </span>
           <div className="flex-1 h-px bg-gray-700"></div>
         </div>
-        <div className="flex justify-center mt-3">
+
+        <div className="flex justify-center mt-3 w-full overflow-hidden">
           <GoogleLogin
             onSuccess={handleSuccess}
             onError={() => toast.error("Google Login Failed")}
@@ -175,7 +180,7 @@ const handleSuccess = async (credentialResponse) => {
             size="large"
             shape="pill"
             text={state === "login" ? "signin_with" : "signup_with"}
-            width="350"
+            /* Removed fixed width="350" to allow natural flex sizing on mobile */
           />
         </div>
 
@@ -184,7 +189,7 @@ const handleSuccess = async (credentialResponse) => {
           onClick={() =>
             setState((prev) => (prev === "login" ? "register" : "login"))
           }
-          className="text-gray-400 text-sm mt-6 cursor-pointer transition-colors duration-200"
+          className="text-gray-400 text-xs sm:text-sm mt-5 sm:mt-6 cursor-pointer transition-colors duration-200"
         >
           {state === "login"
             ? "Don't have an account?"
