@@ -52,47 +52,47 @@ const Credits = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 bg-transparent dark:bg-[#141218] min-h-screen">
-      <h2 className="text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-transparent dark:bg-[#141218] min-h-screen">
+      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-900 dark:text-white transition-all">
         Choose Your Credit Plan
       </h2>
-      <p className="text-center text-gray-500 dark:text-gray-400 mb-12">
+      <p className="text-center text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-8 sm:mb-12">
         Flexible plans for every type of user
       </p>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
         {plans.map((plan) => {
           const isPro = plan._id === "pro";
 
           return (
             <div
               key={plan._id}
-              className={`relative rounded-2xl p-8 transition-all duration-300 flex flex-col justify-between hover:-translate-y-2 hover:shadow-2xl
+              className={`relative rounded-2xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between hover:-translate-y-2 hover:shadow-2xl
               ${
                 isPro
-                  ? "bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl dark:shadow-purple-900/40 scale-105"
+                  ? "bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-2xl dark:shadow-purple-900/40 lg:scale-105"
                   : "bg-white/80 dark:bg-[#1e1b24] border border-gray-200 dark:border-white/10 shadow-md dark:shadow-lg hover:bg-white/60 dark:hover:bg-[#26222d]"
               }`}
             >
               {isPro && (
-                <span className="absolute top-4 right-4 bg-white/90 backdrop-blur text-purple-700 text-xs font-bold px-4 py-1.5 rounded-full shadow-md tracking-wide">
+                <span className="absolute top-4 right-4 bg-white/90 backdrop-blur text-purple-700 text-[10px] sm:text-xs font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-md tracking-wide">
                   ⭐ MOST POPULAR
                 </span>
               )}
 
               <div>
                 <h3
-                  className={`text-2xl font-semibold mb-4 ${
+                  className={`text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 ${
                     isPro ? "text-white" : "text-gray-900 dark:text-white"
                   }`}
                 >
                   {plan.name}
                 </h3>
 
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">${plan.price}</span>
+                <div className="mb-5 sm:mb-6">
+                  <span className="text-3xl sm:text-4xl font-bold">${plan.price}</span>
                   <span
-                    className={`ml-2 ${
+                    className={`ml-2 text-sm sm:text-base ${
                       isPro
                         ? "text-purple-100"
                         : "text-gray-500 dark:text-gray-300"
@@ -103,7 +103,7 @@ const Credits = () => {
                 </div>
 
                 <ul
-                  className={`space-y-2 mb-8 ${
+                  className={`space-y-2 mb-6 sm:mb-8 text-sm sm:text-base ${
                     isPro
                       ? "text-purple-100"
                       : "text-gray-600 dark:text-gray-200"
@@ -127,7 +127,7 @@ const Credits = () => {
               </div>
 
               <button
-                className={`w-full py-3 rounded-lg font-semibold transition transform active:scale-95 cursor-pointer
+                className={`w-full py-2.5 sm:py-3 rounded-lg font-semibold transition transform active:scale-95 cursor-pointer text-sm sm:text-base
                 ${
                   isPro
                     ? "bg-white text-purple-700 hover:bg-gray-100"
