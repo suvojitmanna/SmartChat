@@ -258,3 +258,53 @@ http://localhost:5173
 
 Backend:
 http://localhost:5000
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! If you'd like to improve SmartChat, feel free to fork the repository, create a feature branch, and submit a pull request.
+
+```bash
+# Fork the repository
+
+# Create a new branch
+git checkout -b feature/your-feature
+
+# Commit your changes
+git commit -m "Add new feature"
+
+# Push to GitHub
+git push origin feature/your-feature
+```
+
+---
+
+## ⭐ Support
+
+If you found this project helpful, please consider giving it a ⭐ on GitHub. It helps others discover the project and motivates future development.
+
+---
+
+## 📬 Contact
+
+**Suvojit Manna**
+
+- 🌐 GitHub: https://github.com/suvojitmanna
+- 💼 LinkedIn: https://www.linkedin.com/in/suvojitmanna
+- 📧 Email: your-email@example.com
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+<div align="center">
+
+### 🚀 Built with ❤️ by Suvojit Manna
+
+**If you like this project, don't forget to ⭐ the repository!**
+
+</div>
