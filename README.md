@@ -1,81 +1,80 @@
+<p align="center"> 
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:25D366,100:075E54&height=220&section=header&text=WhatsApp%20Clone&fontSize=45&fontColor=ffffff&animation=fadeIn&desc=Real-time%20Chat%20Application&descAlignY=75" alt="WhatsApp Clone Header" /> 
+</p> 
+
+<p align="center"> 
+  <img src="https://readme-typing-svg.herokuapp.com?color=00FFAA&size=26&center=true&vCenter=true&width=800&lines=Real-time+Messaging+with+Socket.IO;MERN+Stack+Project;Scalable+Chat+Architecture;WhatsApp+UI+Clone;Full-Stack+Realtime+System" alt="Typing SVG" /> 
+</p>
+
 <div align="center">
 
-# 💬 SmartChat
+🏆 **Badges**
 
-**Intelligent AI Chatbot • Fast UI • Full Stack Application**
+<img src="https://img.shields.io/badge/MERN-Stack-4CAF50?style=for-the-badge&logo=mongodb"/>
+<img src="https://img.shields.io/badge/Realtime-Socket.IO-black?style=for-the-badge&logo=socket.io"/>
+<img src="https://img.shields.io/badge/Deployed-Vercel-blue?style=for-the-badge&logo=vercel"/>
+<img src="https://img.shields.io/badge/Status-Production-success?style=for-the-badge"/>
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Access_Here-blue?style=for-the-badge&color=2563EB)](https://smart-chat-client.vercel.app)
-[![GitHub Repository](https://img.shields.io/badge/📂_Repository-Source_Code-black?style=for-the-badge&logo=github)](https://github.com/suvojitmanna/SmartChat)
+**[🌍 Live App](https://whatsapp-gilt-alpha.vercel.app)** • **[💻 GitHub Repository](https://github.com/suvojitmanna/whatsApp_clone)**
 
 </div>
 
 ---
 
-## 🧠 Overview
+## 🧠 Project Overview
 
-**SmartChat** is a highly responsive, full-stack AI chatbot platform engineered for seamless human-AI interaction. Built with modern web architecture, it delivers a high-performance messaging experience complete with intelligent chat history management, a dynamic credit-based usage system, and a highly polished, customizable user interface. 
+A scalable real-time chat application inspired by WhatsApp, built with the **MERN stack and Socket.IO**. This project enables seamless, instant bi-directional communication with live user presence tracking and a highly responsive modern UI.
+
+### ✨ Core Highlights
+* **⚡ Real-time bi-directional messaging**
+* **🟢 Live user presence tracking** (Online/Offline status)
+* **🔐 Secure authentication** via JWT
+* **💬 Modern WhatsApp-like UI**
+* **📡 Event-driven architecture**
 
 ---
 
-## 🖼️ Application Preview
+## 🧱 Tech Stack
+
+<p align="center"> 
+  <img src="https://skillicons.dev/icons?i=mongodb,express,react,nodejs,tailwind" alt="MERN Stack" /> 
+</p>
+
+---
+
+## 🖼️ Demo Preview
 
 <div align="center">
-  <img width="100%" alt="SmartChat Application Interface" src="https://github.com/user-attachments/assets/0aed95ad-9920-4319-8399-8d3214744422" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+  <img width="100%" alt="WhatsApp Clone Demo" src="https://github.com/user-attachments/assets/f51b131c-e1de-496a-9e30-e941f7987bcd" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
 </div>
 
 ---
 
-## ✨ Core Features
+## 🔥 Features
 
-| Feature | Description |
-| :--- | :--- |
-| **🤖 AI Assistant** | Real-time, intelligent conversational capabilities powered by advanced AI models. |
-| **📜 History Management** | Securely saves and organizes past conversations for easy retrieval. |
-| **🔍 Search Functionality** | Instantly query and filter through your entire chat history. |
-| **💎 Credit System** | Built-in resource management to track and control AI API usage. |
-| **🌙 Dark Mode** | Native dark theme support for reduced eye strain and a sleek aesthetic. |
-| **🎨 Sidebar Layout** | Clean, intuitive navigation mirroring industry-standard chat applications. |
-| **⚡ Real-Time UI** | Instant message rendering and status updates for a fluid user experience. |
+### 💬 Messaging
+* Instant message delivery (Powered by Socket.IO)
+* Typing indicators *(Planned)*
+* Read receipts *(Extendable architecture)*
 
----
+### 🧑‍🤝‍🧑 User System
+* JWT Authentication & Authorization
+* Real-time online/offline presence
+* Secure user session handling
 
-## 🛠️ Technology Stack
-
-SmartChat is built on a robust MERN stack architecture, utilizing modern tooling for both client and server:
-
-<div align="center">
-  <br />
-  <img src="https://skillicons.dev/icons?i=react,nodejs,express,mongodb,tailwind,js" alt="Tech Stack Icons" />
-  <br />
-</div>
-
-| Domain | Technologies |
-| :--- | :--- |
-| **Frontend UI** | React, Tailwind CSS |
-| **Backend API** | Node.js, Express.js |
-| **Database** | MongoDB |
-| **Language** | JavaScript |
+### 🎨 UI/UX
+* Premium WhatsApp-inspired interface
+* Fully responsive design for desktop and mobile
+* Smooth, frictionless chat experience
 
 ---
 
-## 🚀 Getting Started
+## 🏗️ Architecture & System Design
 
-Follow these steps to set up a local development environment.
-
-### Prerequisites
-* Node.js installed on your local machine
-* MongoDB instance (local or Atlas)
-
-### Installation
-
-# Clone the repository
-git clone [https://github.com/suvojitmanna/SmartChat](https://github.com/suvojitmanna/SmartChat)
-
-# Navigate into the project directory
-cd SmartChat
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
+### 🧠 System Design (High-Level)
+flowchart LR
+    U[👤 User] --> F[⚛️ React Frontend]
+    F -->|REST API| B[🟢 Express Backend]
+    B --> DB[(🍃 MongoDB)]
+    B --> S[⚡ Socket.IO Server]
+    S -->|WebSocket| F
