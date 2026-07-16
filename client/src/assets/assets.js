@@ -16,6 +16,7 @@ import logout_icon from "./logout_icon.svg";
 import logout_icon_light from "./logout_icon_light.svg";
 import diamond_icon from "./diamond_icon.svg";
 import gallery_icon from "./gallery_icon.svg";
+import Mic_icon from "../assets/mic_icon.svg"
 
 export const assets = {
     logo,
@@ -35,7 +36,8 @@ export const assets = {
     logout_icon_light,
     logo_full_dark,
     diamond_icon,
-    gallery_icon
+    gallery_icon,
+    Mic_icon
 };
 // copy for server controllers
 export const dummyPlans = [
