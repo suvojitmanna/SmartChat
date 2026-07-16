@@ -1,101 +1,81 @@
-<h1 align="center">💬 SmartChat</h1>
+<div align="center">
 
-<p align="center">
-  🤖 Intelligent AI Chatbot • ⚡ Fast UI • 🚀 Full Stack App
-</p>
+# 💬 SmartChat
 
-<p align="center">
-  <a href="https://smart-chat-client.vercel.app">🌐 Live Demo</a> •
-  <a href="https://github.com/suvojitmanna/SmartChat">📂 Repository</a>
-</p>
+**Intelligent AI Chatbot • Fast UI • Full Stack Application**
 
----
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Access_Here-blue?style=for-the-badge&color=2563EB)](https://smart-chat-client.vercel.app)
+[![GitHub Repository](https://img.shields.io/badge/📂_Repository-Source_Code-black?style=for-the-badge&logo=github)](https://github.com/suvojitmanna/SmartChat)
 
-## 🧠 About
-
-SmartChat is a **full-stack AI chatbot application** that allows users to interact with an intelligent assistant in real-time.
-
-It provides a modern chat experience with features like chat history, credits system, and customizable UI.
+</div>
 
 ---
 
-## ✨ Features
+## 🧠 Overview
 
-* 💬 AI-powered chatbot
-* 📜 Chat history management
-* 🔍 Search chat history
-* 💎 Credit-based usage system
-* 🌙 Dark mode support
-* ⚡ Fast and responsive UI
-* 🎨 Clean sidebar-based layout
+**SmartChat** is a highly responsive, full-stack AI chatbot platform engineered for seamless human-AI interaction. Built with modern web architecture, it delivers a high-performance messaging experience complete with intelligent chat history management, a dynamic credit-based usage system, and a highly polished, customizable user interface. 
 
 ---
 
-## 🖼️ Preview
+## 🖼️ Application Preview
 
-<img width="1905" height="913" alt="Screenshot 2026-03-24 222635" src="https://github.com/user-attachments/assets/0aed95ad-9920-4319-8399-8d3214744422" />
-
-
----
-
-## 🛠️ Tech Stack
-
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=react,nodejs,express,mongodb,tailwind,js" />
-</p>
+<div align="center">
+  <img width="100%" alt="SmartChat Application Interface" src="https://github.com/user-attachments/assets/0aed95ad-9920-4319-8399-8d3214744422" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+</div>
 
 ---
 
-## 🚀 Live Demo
+## ✨ Core Features
 
-👉 https://smart-chat-client.vercel.app
+| Feature | Description |
+| :--- | :--- |
+| **🤖 AI Assistant** | Real-time, intelligent conversational capabilities powered by advanced AI models. |
+| **📜 History Management** | Securely saves and organizes past conversations for easy retrieval. |
+| **🔍 Search Functionality** | Instantly query and filter through your entire chat history. |
+| **💎 Credit System** | Built-in resource management to track and control AI API usage. |
+| **🌙 Dark Mode** | Native dark theme support for reduced eye strain and a sleek aesthetic. |
+| **🎨 Sidebar Layout** | Clean, intuitive navigation mirroring industry-standard chat applications. |
+| **⚡ Real-Time UI** | Instant message rendering and status updates for a fluid user experience. |
 
 ---
 
-## ⚙️ Installation
+## 🛠️ Technology Stack
 
-```bash id="smartsetup"
-git clone https://github.com/suvojitmanna/SmartChat
+SmartChat is built on a robust MERN stack architecture, utilizing modern tooling for both client and server:
+
+<div align="center">
+  <br />
+  <img src="https://skillicons.dev/icons?i=react,nodejs,express,mongodb,tailwind,js" alt="Tech Stack Icons" />
+  <br />
+</div>
+
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend UI** | React, Tailwind CSS |
+| **Backend API** | Node.js, Express.js |
+| **Database** | MongoDB |
+| **Language** | JavaScript |
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to set up a local development environment.
+
+### Prerequisites
+* Node.js installed on your local machine
+* MongoDB instance (local or Atlas)
+
+### Installation
+
+# Clone the repository
+git clone [https://github.com/suvojitmanna/SmartChat](https://github.com/suvojitmanna/SmartChat)
+
+# Navigate into the project directory
 cd SmartChat
+
+# Install dependencies
 npm install
+
+# Start the development server
 npm run dev
-```
-
----
-
-## 📊 Key Highlights
-
-* ⚡ Real-time chat experience
-* 💎 Credits system for usage control
-* 📁 Organized chat history
-* 🎯 Clean UI/UX design
-
----
-
-## 📌 Future Improvements
-
-* 🎤 Voice input support
-* 📱 Mobile app version
-* 💳 Payment integration
-* 🧠 AI personalization
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to fork and submit PR 🚀
-
----
-
-## ⭐ Support
-
-If you like this project, give it a ⭐
-
----
-
-## 👨‍💻 Author
-
-**Suvojit Manna**
-💻 MERN Developer | 🚀 AI Builder
-
----
