@@ -156,6 +156,7 @@ const Message = ({ message }) => {
   }, [currentWordIndex, speaking]);
 
   useEffect(() => {
+    // Force load voices (mobile bug fix)
     window.speechSynthesis.getVoices();
 
     window.speechSynthesis.onvoiceschanged = () => {
@@ -276,22 +277,24 @@ const Message = ({ message }) => {
       ) : (
         <div className="flex items-start my-4 gap-3 group">
           <div
-  className="relative flex flex-col gap-3
-  px-4 py-3 pr-14
-  sm:px-5 sm:py-4 sm:pr-16
-  w-full max-w-full sm:max-w-2xl 
-  rounded-2xl
-  backdrop-blur-lg
-  bg-white/70 dark:bg-gray-900/70
-  border border-gray-200/60 dark:border-purple-500/20
-  shadow-lg transition hover:shadow-xl"
->
+            className="relative flex flex-col gap-3
+            px-4 py-3 pr-14
+            sm:px-5 sm:py-4 sm:pr-16
+            max-w-[92%] sm:max-w-2xl
+            rounded-2xl
+            backdrop-blur-lg
+            bg-white/70 dark:bg-gray-900/70
+            border border-gray-200/60 dark:border-purple-500/20
+            shadow-lg transition hover:shadow-xl"
+          >
             <div className="absolute top-2 right-2 flex gap-2">
               {/* copy */}
               {!message.isImage && (
                 <button
                   onClick={handleCopy}
-                  className="p-1.5 rounded-lg bg-gray-200/70 dark:bg-gray-800/70 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer transition"
+                  className="p-1.5 rounded-lg
+    bg-gray-200/70 dark:bg-gray-800/70
+    hover:bg-gray-300 dark:hover:bg-gray-700 transition"
                 >
                   {copied ? (
                     <svg
@@ -325,7 +328,9 @@ const Message = ({ message }) => {
               {/* Share */}
               <button
                 onClick={handleShare}
-                className="p-1.5 rounded-lg bg-gray-200/70 dark:bg-gray-800/70 hover:bg-gray-300 dark:hover:bg-gray-700 transition cursor-pointer"
+                className="p-1.5 rounded-lg
+              bg-gray-200/70 dark:bg-gray-800/70
+              hover:bg-gray-300 dark:hover:bg-gray-700 transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -348,7 +353,7 @@ const Message = ({ message }) => {
               {!message.isImage && (
                 <button
                   onClick={() => handleSpeak(message.content)}
-                  className="p-1.5 rounded-lg bg-gray-200/70 dark:bg-gray-800/70 hover:bg-gray-300 cursor-pointer dark:hover:bg-gray-700 transition"
+                  className="p-1.5 rounded-lg bg-gray-200/70 dark:bg-gray-800/70 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
                 >
                   {!speaking ? (
                     <svg
@@ -394,7 +399,7 @@ const Message = ({ message }) => {
               <img
                 src={message.content}
                 alt="generated"
-                className="rounded-xl shadow-md max-w-full sm:max-w-full"
+                className="rounded-xl shadow-md max-w-xs sm:max-w-md"
               />
             ) : (
               <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none break-words">

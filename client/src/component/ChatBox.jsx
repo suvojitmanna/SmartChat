@@ -24,7 +24,7 @@ const ChatBox = () => {
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState("text");
 
-  /* ================= LOAD SELECTED CHAT ================= */
+  /* LOAD SELECTED CHAT */
   useEffect(() => {
     if (selectedChat) {
       setMessages(selectedChat.messages || []);
@@ -33,14 +33,14 @@ const ChatBox = () => {
     }
   }, [selectedChat]);
 
-  /* ================= SAVE ACTIVE CHAT (Refresh Safe) ================= */
+  /* SAVE ACTIVE CHAT (Refresh Safe)  */
   useEffect(() => {
     if (selectedChat?._id) {
       sessionStorage.setItem("activeChatId", selectedChat._id);
     }
   }, [selectedChat]);
 
-  /* ================= AUTO SCROLL ================= */
+  /*  AUTO SCROLL  */
   useEffect(() => {
     containerRef.current?.scrollTo({
       top: containerRef.current.scrollHeight,
@@ -48,7 +48,7 @@ const ChatBox = () => {
     });
   }, [messages]);
 
-  /* ================= STOP BUTTON ================= */
+  /*  STOP BUTTON  */
   const handleStop = () => {
     if (controllerRef.current) {
       controllerRef.current.abort();
@@ -60,7 +60,7 @@ const ChatBox = () => {
     setLoading(false);
   };
 
-  /* ================= SEND MESSAGE  ================= */
+  /*  SEND MESSAGE   */
   const createChatIfNeeded = async () => {
     if (selectedChat?._id) return selectedChat._id;
 
@@ -88,7 +88,7 @@ const ChatBox = () => {
     return null;
   };
 
-  /* ================= CHAT ================= */
+  /*  CHAT  */
   const onSubmit = async (e) => {
     e.preventDefault();
     if (loading || !prompt.trim() || !user) return;
@@ -162,7 +162,7 @@ const ChatBox = () => {
         }));
         toast.success("Chat create Successfully...🎉");
       } else {
-        toast.error("⚠️",data.message);
+        toast.error("⚠️", data.message);
       }
     } catch (error) {
       if (error.code === "ERR_CANCELED" || error.name === "CanceledError") {
@@ -221,10 +221,31 @@ const ChatBox = () => {
         <select
           onChange={(e) => setMode(e.target.value)}
           value={mode}
-          className="text-sm outline-none bg-transparent"
+          // Change the text color of the currently selected item
+          className={`text-sm outline-none bg-transparent ${
+            theme === "dark" ? "text-white" : "text-gray-900"
+          }`}
         >
-          <option value="text">Text</option>
-          <option value="image">Image</option>
+          <option
+            value="text"
+            className={
+              theme === "dark"
+                ? "bg-gray-800 text-white"
+                : "bg-white text-black"
+            }
+          >
+            Text
+          </option>
+          <option
+            value="image"
+            className={
+              theme === "dark"
+                ? "bg-gray-800 text-white"
+                : "bg-white text-black"
+            }
+          >
+            Image
+          </option>
         </select>
 
         <div className="h-5 w-px bg-gray-300 opacity-50"></div>

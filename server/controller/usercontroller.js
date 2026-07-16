@@ -10,7 +10,7 @@ const generateToken = (id) => {
   });
 };
 
-// ================= REGISTER USER =================
+//  REGISTER USER 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -49,7 +49,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// ================= LOGIN USER =================
+//  LOGIN USER 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -94,7 +94,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// ================= GET LOGGED IN USER =================
+//  GET LOGGED IN USER 
 export const getUser = async (req, res) => {
   try {
     res.status(200).json({

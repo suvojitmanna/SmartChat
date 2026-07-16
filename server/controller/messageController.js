@@ -83,7 +83,7 @@ export const imageMessageController = async (req, res) => {
         .json({ success: false, message: "Chat not found" });
     }
 
-    // ================= SAVE USER MESSAGE =================
+    //  SAVE USER MESSAGE 
     chat.messages.push({
       role: "user",
       content: prompt,
@@ -91,7 +91,7 @@ export const imageMessageController = async (req, res) => {
       isImage: false,
     });
 
-    // ================= CLIPDROP IMAGE GENERATION =================
+    //  CLIPDROP IMAGE GENERATION 
     const clipdropResponse = await axios.post(
       "https://clipdrop-api.co/text-to-image/v1",
       {
@@ -105,19 +105,19 @@ export const imageMessageController = async (req, res) => {
       },
     );
 
-    // ================= CONVERT TO BASE64 =================
+    //  CONVERT TO BASE64 
     const base64Image = `data:image/png;base64,${Buffer.from(
       clipdropResponse.data,
     ).toString("base64")}`;
 
-    // ================= UPLOAD TO IMAGEKIT =================
+    //  UPLOAD TO IMAGEKIT 
     const uploadResponse = await imagekit.upload({
       file: base64Image,
       fileName: `${Date.now()}.png`,
       folder: "smartgpt",
     });
 
-    // ================= SAVE AI RESPONSE =================
+    //  SAVE AI RESPONSE 
     const reply = {
       role: "assistant",
       content: uploadResponse.url,
@@ -129,7 +129,7 @@ export const imageMessageController = async (req, res) => {
     chat.messages.push(reply);
     await chat.save();
 
-    // ================= DEDUCT CREDITS =================
+    //  DEDUCT CREDITS 
     await User.updateOne({ _id: userId }, { $inc: { credits: -2 } });
 
     res.status(200).json({ success: true, reply });

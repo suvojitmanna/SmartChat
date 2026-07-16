@@ -17,7 +17,7 @@ export const AppcontextProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loadingUser, setLoadingUser] = useState(true);
 
-  /* ================= FETCH USER ================= */
+  /*  FETCH USER  */
   const fetchUser = async () => {
     try {
       const { data } = await axios.get("/api/user/data");
@@ -34,7 +34,7 @@ export const AppcontextProvider = ({ children }) => {
     }
   };
 
-  /* ================= CREATE NEW CHAT ================= */
+  /*  CREATE NEW CHAT  */
   const createNewChat = async () => {
     try {
       if (!user) return toast.error("Login to create a new chat");
@@ -58,7 +58,7 @@ export const AppcontextProvider = ({ children }) => {
     }
   };
 
-  /* ================= FETCH USER CHATS ================= */
+  /*  FETCH USER CHATS  */
   const fetchUserChats = async () => {
     try {
       const { data } = await axios.get("/api/chat/get");
@@ -89,7 +89,7 @@ export const AppcontextProvider = ({ children }) => {
     }
   };
 
-  /* ================= THEME HANDLING ================= */
+  /*  THEME HANDLING  */
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -99,7 +99,7 @@ export const AppcontextProvider = ({ children }) => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  /* ================= USER CHANGED ================= */
+  /*  USER CHANGED  */
   useEffect(() => {
     if (user) {
       fetchUserChats();
@@ -109,7 +109,7 @@ export const AppcontextProvider = ({ children }) => {
     }
   }, [user]);
 
-  /* ================= TOKEN HANDLING ================= */
+  /*  TOKEN HANDLING  */
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -121,7 +121,7 @@ export const AppcontextProvider = ({ children }) => {
     }
   }, [token]);
 
-  /* ================= CONTEXT VALUE ================= */
+  /*  CONTEXT VALUE  */
   const value = {
     navigate,
     user,
