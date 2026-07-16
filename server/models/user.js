@@ -18,6 +18,18 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
+    googleId: {
+      type: String,
+    },
+
+    picture: {
+      type: String,
+    },
+
+    provider: {
+      type: String,
+      default: "local",
+    },
     credits: {
       type: Number,
       default: 10,
@@ -28,7 +40,7 @@ const userSchema = new mongoose.Schema(
 
 // Hash password before saving
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return ;
+  if (!this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);

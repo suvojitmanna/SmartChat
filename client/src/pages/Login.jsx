@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAppcontext } from "../context/Appcontext";
 import toast from "react-hot-toast";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [state, setState] = useState("login");
@@ -9,6 +10,27 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { axios, setToken, navigate } = useAppcontext();
+
+  const handleSuccess = async (credentialResponse) => {
+    try {
+      const { data } = await axios.post("/api/user/google-login", {
+        credential: credentialResponse.credential,
+      });
+
+      if (data.success) {
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+
+        toast.success("Google Login Successful 🎉");
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Google Login Failed");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,10 +156,26 @@ const Login = () => {
         {/* Submit */}
         <button
           type="submit"
-          className="mt-8 w-full h-11 rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 transition-all duration-200 font-semibold shadow-lg hover:shadow-indigo-500/50"
+          className="mt-8 w-full h-11 rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 active:scale-95 transition-all duration-200 font-semibold shadow-lg hover:shadow-indigo-500/50 cursor-pointer"
         >
           {state === "login" ? "Login" : "Create Account"}
         </button>
+        <div className="flex items-center my-5">
+          <div className="flex-1 h-px bg-gray-700"></div>
+          <span className="px-4 text-gray-400 text-sm">OR</span>
+          <div className="flex-1 h-px bg-gray-700"></div>
+        </div>
+        <div className="flex justify-center mt-3">
+          <GoogleLogin
+            onSuccess={handleSuccess}
+            onError={() => toast.error("Google Login Failed")}
+            theme="filled_black"
+            size="large"
+            shape="pill"
+            text={state === "login" ? "signin_with" : "signup_with"}
+            width="350"
+          />
+        </div>
 
         {/* Toggle */}
         <p

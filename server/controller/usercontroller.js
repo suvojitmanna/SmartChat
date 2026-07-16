@@ -2,6 +2,9 @@ import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import Chat from "../models/chat.js";
 import bcrypt from "bcryptjs";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate JWT
 const generateToken = (id) => {
@@ -85,6 +88,50 @@ export const loginUser = async (req, res) => {
         email: user.email,
       },
       token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    const email = payload.email;
+    const name = payload.name;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        googleId: payload.sub,
+        picture: payload.picture,
+        provider: "google",
+        password: Math.random().toString(36).slice(-8),
+      });
+    }
+
+    res.json({
+      success: true,
+      token: generateToken(user._id),
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     res.status(500).json({

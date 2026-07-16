@@ -8,11 +8,14 @@ import "prismjs/components/prism-c";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-python";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <AppcontextProvider>
-      <App />
-    </AppcontextProvider>
-  </BrowserRouter>,
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <BrowserRouter>
+      <AppcontextProvider>
+        <App />
+      </AppcontextProvider>
+    </BrowserRouter>
+  </GoogleOAuthProvider>,
 );
