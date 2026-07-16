@@ -290,8 +290,8 @@ If you found this project helpful, please consider giving it a ⭐ on GitHub. It
 **Suvojit Manna**
 
 - 🌐 GitHub: https://github.com/suvojitmanna
-- 💼 LinkedIn: https://www.linkedin.com/in/suvojitmanna
-- 📧 Email: your-email@example.com
+- 💼 LinkedIn: https://www.linkedin.com/in/suvojit-manna-505614327
+- 📧 Email: mannasuvojit84@gmail.com
 
 ---
 
