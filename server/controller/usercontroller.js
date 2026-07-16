@@ -97,6 +97,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// Google Login
 export const googleLogin = async (req, res) => {
   try {
     const { credential } = req.body;

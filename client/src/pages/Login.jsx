@@ -11,26 +11,28 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { axios, setToken, navigate } = useAppcontext();
 
-  const handleSuccess = async (credentialResponse) => {
-    try {
-      const { data } = await axios.post("/api/user/google-login", {
-        credential: credentialResponse.credential,
-      });
+const handleSuccess = async (credentialResponse) => {
+  try {
+    const { data } = await axios.post("/api/user/google-login", {
+      credential: credentialResponse.credential,
+    });
 
-      if (data.success) {
-        setToken(data.token);
-        localStorage.setItem("token", data.token);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-
-        toast.success("Google Login Successful 🎉");
-        navigate("/");
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Google Login Failed");
+    if (!data.success) {
+      return toast.error(data.message);
     }
-  };
+
+    setToken(data.token);
+    localStorage.setItem("token", data.token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+
+    toast.success("Google Login Successful 🎉");
+
+    navigate("/");
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    toast.error(error.response?.data?.message || error.message);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();

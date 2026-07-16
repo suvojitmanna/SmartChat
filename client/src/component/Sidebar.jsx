@@ -59,13 +59,9 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`flex flex-col h-[100dvh] 
-  w-72 max-w-[80%] p-5 
-  dark:bg-gradient-to-b dark:from-[#242124]/90 dark:to-[#000000]/90 bg-white
-  border-r border-[#80609F]/30 backdrop-blur-3xl 
-  transition-transform duration-500 max-md:fixed left-0 top-0 z-50 ${
-    !isMenuOpen && "max-md:-translate-x-full max-md:pointer-events-none"
-  }`}
+        className={`flex flex-col h-[100dvh] w-72 max-w-[80%] p-5 dark:bg-gradient-to-b dark:from-[#242124]/90 dark:to-[#000000]/90 bg-white border-r border-[#80609F]/30 backdrop-blur-3xl transition-transform duration-500 max-md:fixed left-0 top-0 z-50 ${
+          !isMenuOpen && "max-md:-translate-x-full max-md:pointer-events-none"
+        }`}
       >
         <img
           src={theme === "dark" ? assets.logo_full : assets.logo_full_dark}
@@ -210,10 +206,12 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
 
           <div className="flex items-center gap-3 p-2.5 border border-gray-300 dark:border-white/15 rounded-md group">
             <img
-              src={assets.user_icon}
+              src={user?.picture || assets.user_icon}
               className="w-7 rounded-full"
-              alt="user"
+              referrerPolicy="no-referrer"
+              alt="User avatar"
             />
+
             <p className="flex-1 text-sm truncate">
               {user ? user.name : "Login your account"}
             </p>
