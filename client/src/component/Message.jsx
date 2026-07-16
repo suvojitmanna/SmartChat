@@ -276,7 +276,7 @@ const Message = ({ message }) => {
       ) : (
         <div className="flex items-start my-4 gap-3 group">
           <div
-  className="relative flex flex-col gap-3
+            className="relative flex flex-col gap-3
   px-4 py-3 pr-14
   sm:px-5 sm:py-4 sm:pr-16
   w-full max-w-full sm:max-w-2xl 
@@ -285,7 +285,7 @@ const Message = ({ message }) => {
   bg-white/70 dark:bg-gray-900/70
   border border-gray-200/60 dark:border-purple-500/20
   shadow-lg transition hover:shadow-xl"
->
+          >
             <div className="absolute top-2 right-2 flex gap-2">
               {/* copy */}
               {!message.isImage && (
