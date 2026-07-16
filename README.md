@@ -1,80 +1,99 @@
-<p align="center"> 
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:25D366,100:075E54&height=220&section=header&text=WhatsApp%20Clone&fontSize=45&fontColor=ffffff&animation=fadeIn&desc=Real-time%20Chat%20Application&descAlignY=75" alt="WhatsApp Clone Header" /> 
-</p> 
+<h1 align="center">💬 SmartChat</h1>
 
-<p align="center"> 
-  <img src="https://readme-typing-svg.herokuapp.com?color=00FFAA&size=26&center=true&vCenter=true&width=800&lines=Real-time+Messaging+with+Socket.IO;MERN+Stack+Project;Scalable+Chat+Architecture;WhatsApp+UI+Clone;Full-Stack+Realtime+System" alt="Typing SVG" /> 
+<p align="center">
+  🤖 Intelligent AI Chatbot • ⚡ Fast UI • 🚀 Full Stack App
 </p>
 
-<div align="center">
-
-🏆 **Badges**
-
-<img src="https://img.shields.io/badge/MERN-Stack-4CAF50?style=for-the-badge&logo=mongodb"/>
-<img src="https://img.shields.io/badge/Realtime-Socket.IO-black?style=for-the-badge&logo=socket.io"/>
-<img src="https://img.shields.io/badge/Deployed-Vercel-blue?style=for-the-badge&logo=vercel"/>
-<img src="https://img.shields.io/badge/Status-Production-success?style=for-the-badge"/>
-
-**[🌍 Live App](https://whatsapp-gilt-alpha.vercel.app)** • **[💻 GitHub Repository](https://github.com/suvojitmanna/whatsApp_clone)**
-
-</div>
-
----
-
-## 🧠 Project Overview
-
-A scalable real-time chat application inspired by WhatsApp, built with the **MERN stack and Socket.IO**. This project enables seamless, instant bi-directional communication with live user presence tracking and a highly responsive modern UI.
-
-### ✨ Core Highlights
-* **⚡ Real-time bi-directional messaging**
-* **🟢 Live user presence tracking** (Online/Offline status)
-* **🔐 Secure authentication** via JWT
-* **💬 Modern WhatsApp-like UI**
-* **📡 Event-driven architecture**
-
----
-
-## 🧱 Tech Stack
-
-<p align="center"> 
-  <img src="https://skillicons.dev/icons?i=mongodb,express,react,nodejs,tailwind" alt="MERN Stack" /> 
+<p align="center">
+  <a href="https://smart-chat-client.vercel.app">🌐 Live Demo</a> •
+  <a href="https://github.com/suvojitmanna/SmartChat">📂 Repository</a>
 </p>
 
 ---
 
-## 🖼️ Demo Preview
+## 🧠 About
 
-<div align="center">
-  <img width="100%" alt="WhatsApp Clone Demo" src="https://github.com/user-attachments/assets/f51b131c-e1de-496a-9e30-e941f7987bcd" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
-</div>
+SmartChat is a **full-stack AI chatbot application** that allows users to interact with an intelligent assistant in real-time.
 
----
-
-## 🔥 Features
-
-### 💬 Messaging
-* Instant message delivery (Powered by Socket.IO)
-* Typing indicators *(Planned)*
-* Read receipts *(Extendable architecture)*
-
-### 🧑‍🤝‍🧑 User System
-* JWT Authentication & Authorization
-* Real-time online/offline presence
-* Secure user session handling
-
-### 🎨 UI/UX
-* Premium WhatsApp-inspired interface
-* Fully responsive design for desktop and mobile
-* Smooth, frictionless chat experience
+It provides a modern chat experience with features like chat history, credits system, and customizable UI.
 
 ---
 
-## 🏗️ Architecture & System Design
+## ✨ Features
 
-### 🧠 System Design (High-Level)
-flowchart LR
-    U[👤 User] --> F[⚛️ React Frontend]
-    F -->|REST API| B[🟢 Express Backend]
-    B --> DB[(🍃 MongoDB)]
-    B --> S[⚡ Socket.IO Server]
-    S -->|WebSocket| F
+* 💬 AI-powered chatbot
+* 📜 Chat history management
+* 🔍 Search chat history
+* 💎 Credit-based usage system
+* 🌙 Dark mode support
+* ⚡ Fast and responsive UI
+* 🎨 Clean sidebar-based layout
+
+---
+
+## 🖼️ Preview
+
+<img width="1905" height="913" alt="Screenshot 2026-03-24 222635" src="https://github.com/user-attachments/assets/0aed95ad-9920-4319-8399-8d3214744422" />
+
+
+---
+
+## 🛠️ Tech Stack
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=react,nodejs,express,mongodb,tailwind,js" />
+</p>
+
+---
+
+## 🚀 Live Demo
+
+👉 https://smart-chat-client.vercel.app
+
+---
+
+## ⚙️ Installation
+
+```bash id="smartsetup"
+git clone https://github.com/suvojitmanna/SmartChat
+cd SmartChat
+npm install
+npm run dev
+```
+
+---
+
+## 📊 Key Highlights
+
+* ⚡ Real-time chat experience
+* 💎 Credits system for usage control
+* 📁 Organized chat history
+* 🎯 Clean UI/UX design
+
+---
+
+## 📌 Future Improvements
+
+* 🎤 Voice input support
+* 📱 Mobile app version
+* 💳 Payment integration
+* 🧠 AI personalization
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to fork and submit PR 🚀
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐
+
+---
+
+## 👨‍💻 Author
+
+**Suvojit Manna**
+💻 MERN Developer | 🚀 AI Builder
